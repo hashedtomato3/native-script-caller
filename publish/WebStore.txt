@@ -1,0 +1,13 @@
+
+Customizable MENU to run User scripts.
+
+This extension provides a customizable icon and menu in Chrome toolbar to run user scripts at browser and/or local PC.
+
+- Run user Javascript code injected to the page in the active tab
+- Run user Node.js Javascript code at local Windows PC
+- Pass the values returned from injected code to Node.js code
+- Customize icon image, menu title and menu item title
+- Filter menu items by prefix of URL of active page
+
+This extension requires Native Client installed in the local Windows PC.
+The installation instruction is displayed at the installation of this extension.

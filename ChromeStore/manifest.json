@@ -1,6 +1,6 @@
 {
     "name": "Native Script Caller",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "manifest_version": 2,
     "description": "Customizable menu to call user Node.js scripts",
     "icons": {

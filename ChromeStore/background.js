@@ -150,6 +150,7 @@ function actionForClickMenuItem(message, sendResponse) {
                 })
                 const msg = {title:title, url:url, html:html, frames:frames};
                 console.log("message length: "+ JSON.stringify(msg).length);
+                //console.log(msg);
                 return msg;
             } catch(err) {
                 // when error, return object should have "error" key
@@ -169,7 +170,7 @@ function actionForClickMenuItem(message, sendResponse) {
             // send message to native host to execute native code
             let nativeScript = storageData[storageKey].browserAction.menu[message.idx].nativeScript;
             if( ! /^\s*$/.test(nativeScript) ) { // if native script exists
-                let msg = {cmd:"click", idx:message.idx, injectionCodeResults:injectionCodeResults}
+                let msg = {cmd:"click", idx:message.idx, info:injectionCodeResults[0]}
                 console.info("request to native host:")
                 console.log(msg)
                 chrome.runtime.sendNativeMessage(appName, msg, response => {

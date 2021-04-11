@@ -1,8 +1,8 @@
 {
     "name": "Native Script Caller",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "manifest_version": 2,
-    "description": "Customizable menu to call user Node.js scripts",
+    "description": "Customizable menu to execute user specified programs at local PC",
     "icons": {
         "128": "icon-128.png"
     },

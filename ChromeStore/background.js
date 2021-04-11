@@ -132,7 +132,9 @@ function actionForClickMenuItem(message, sendResponse) {
             }
                 
             try {
+                var url = location.href;
                 var html = document2html(document);
+                var title = document.title;
                 var frames = [];
                 document.querySelectorAll("frame").forEach(function(e){
                     console.log(e.id);
@@ -146,7 +148,7 @@ function actionForClickMenuItem(message, sendResponse) {
                         frames.push(frame);
                     }
                 })
-                const msg = {title:null, html:html, frames:frames};
+                const msg = {title:title, url:url, html:html, frames:frames};
                 console.log("message length: "+ JSON.stringify(msg).length);
                 return msg;
             } catch(err) {

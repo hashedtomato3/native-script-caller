@@ -6,7 +6,7 @@ import {appName, storageKey, sendMessageToNativeHost} from "./common.js"
 
 // on installation of this extension, setup browser action icon and menu
 chrome.runtime.onInstalled.addListener((details)=>{
-    if( details.reason === "install" ){ // on install
+    if( details.reason === "install" || details.reason === "install" ){ // on install or 
         setupAll(null);
     }
 });
@@ -122,18 +122,21 @@ function actionForClickMenuItem(message, sendResponse) {
         // execute injection code
         console.log(storageData[storageKey].browserAction)
 
+        const removal = storageData[storageKey].browserAction.menu[message.idx].removal;
         const code = `
-        function getPageHTML() {
-            function document2html(doc) {
+        function getPageHTML(removal) {
+            function document2html(doc, removal) {
                 const d = doc.cloneNode(true);
-                d.querySelectorAll("script").forEach(function(e){ e.remove(); });
+                removal.split(";").forEach(r => {
+                    d.querySelectorAll(r).forEach(function(e){ e.remove(); });
+                });
                 //console.log(doc.querySelectorAll("script").length)
                 return ''+d.getElementsByTagName('html')[0].innerHTML+'';
             }
                 
             try {
                 var url = location.href;
-                var html = document2html(document);
+                var html = document2html(document, removal);
                 var title = document.title;
                 var frames = [];
                 document.querySelectorAll("frame").forEach(function(e){
@@ -142,7 +145,7 @@ function actionForClickMenuItem(message, sendResponse) {
                     //console.log(d);
                     if(d) {
                         let frame = {};
-                        frame.html = document2html(d);
+                        frame.html = document2html(d, removal);
                         frame.name = e.getAttribute("name");
                         frame.id = e.id;
                         frames.push(frame);
@@ -157,7 +160,7 @@ function actionForClickMenuItem(message, sendResponse) {
                 return {error:err.name, message:err.message, stack:err.stack}
             }
         }
-        getPageHTML();`;
+        getPageHTML("${removal}");`;
             
         chrome.tabs.executeScript({code:code}, function(injectionCodeResults){
             console.info("return value from injection code:");

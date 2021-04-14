@@ -58,8 +58,8 @@
             <p class="subtitle is-5">How to install Native Client</p>
             <div>
               <ol style="margin: 0 4ex">
-                <li>Download the following ZIP file and extract it in a local folder, 
-                    so the folder named "host" is created.
+                <li>Download the following ZIP file and extract it in a local folder.<br>
+                     -> the folder named "host" will be created.
                   <ul>
                     <li><a href="/host.zip" download="host.zip">host.zip</a></li>
                   </ul>
@@ -70,7 +70,7 @@
                     <li><a id="manifest_link" v-bind:href="manifestDownloadLink" download="manifest.json">manifest.json</a></li>
                   </ul>
                 </li>
-                <li>Click <a href="https://nodejs.org/" target="_blank">here</a> to download Node.js and install it.</li>
+                <li>Install Node.js. Click <a href="https://nodejs.org/" target="_blank">here</a> to download installer.</li>
                 <li>Double-click <code>install.bat</code> in the folder "host" to install native client.</li>
                 <li>To uninstall the native client, double-click <code>uninstall.bat</code>.</li>
               </ol>
@@ -127,7 +127,7 @@
                         <div class="card-content">
                             <div class="level">
                               <div class="level-left">
-                                  <p class="title is-4">{{index}} {{menu.title}}</p>
+                                  <p class="title is-4">{{menu.title}}</p>
                               </div>
                               <div class="level-right" v-bind:index="index">
                                 <b-button type="is-primary" v-on:click="onclick_delete" >
@@ -136,6 +136,14 @@
                                       <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
                                     </svg>
                                     <span>Delete</span>
+                                  </div>
+                                </b-button>
+                                <b-button type="is-primary" v-on:click="ComponentModalActive = -1;" style="margin:auto 5px">
+                                  <div style="display:flex">
+                                    <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                      <path fill="currentColor" d="M19,3H16.3H7.7H5A2,2 0 0,0 3,5V7.7V16.4V19A2,2 0 0,0 5,21H7.7H16.4H19A2,2 0 0,0 21,19V16.3V7.7V5A2,2 0 0,0 19,3M15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4L13.4,12L17,15.6L15.6,17Z" />
+                                    </svg>
+                                    <span>Close</span>
                                   </div>
                                 </b-button>
                               </div>            
@@ -153,7 +161,7 @@
                                   <input class="input" type="text" v-model="menu.removal" title="	(optional)">
                                 </b-field>
                                 <b-field label="Native Script">
-                                  <textarea class="textarea" v-model="menu.nativeScript" title="Native script"></textarea>
+                                  <textarea class="textarea" v-model="menu.nativeScript" title="Native script" rows="15"></textarea>
                                 </b-field>                
                               </form>
                             </div>              
@@ -183,7 +191,7 @@
                   </tr>
                   <tr>
                     <td>icon</td>
-                    <td>Relative path name of icon image file. It should be 16x16 PNG file.</td>
+                    <td>Relative path name of icon image file from "host" folder. It should be 16x16 PNG file.</td>
                   </tr>
                   <tr>
                     <td>Menu Items</td>
@@ -195,20 +203,24 @@
                   </tr>
                   <tr>
                     <td>menu item: matches</td>
-                    <td>(optional) An array of URL prefix match strings.
-                      The menu item is shown only if one of the string matches the URL of active page.</td>
+                    <td>(optional) Comma-separated list of URL prefix match strings.
+                      The menu item is shown only if one of the string matches the URL of active page. Refer <a href="https://developer.chrome.com/docs/extensions/mv3/match_patterns/">pattern format.</a></td>
                   </tr>
                   <tr>
                     <td>menu item: Removal</td>
-                    <td>(optional)
+                    <td>(optional) Under Construction.
                     </td>
                   </tr>
                   <tr>
                     <td>menu item: native Script</td>
-                    <td>(optional) Native script code.
-                      This code contains javascript code that is executed by Node.js in local PC after executing the
-                      injection code.
-                      In the code, <code>function main(argument)</code> must be defined.
+                    <td>(optional) Native javascript code that is executed by Node.js in local PC.
+                      This code must contain the definition of <code>function NativeScriptFunction(info)</code>, which is executed when menu is clicked.
+                      <code>info</code> is a object of information of Web Page in Active tab:<br>
+                      info.url: URL of the page.<br>
+                      info.html: HTML text of the page<br>
+                      info.tilte: Title of the page.<br>
+                      info.frames[n].html: HTML text of frame document in the page.<br>
+                      info.frame[n].id: Id of the frame in the page.
                     </td>
                   </tr>
                 </table>
@@ -240,7 +252,7 @@
             After modificaion of the above <code>customize/*</code> files,
             click the following button to refresh setup.
             <br>
-            <input id="setup" type="button" value="Update Setup" v-on:click="onclick_setup">
+            <button class="button is-primary" v-on:click="onclick_setup">Update Setup</button>
             <br>
             <br>
           </div>

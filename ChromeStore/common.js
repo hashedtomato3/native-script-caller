@@ -14,7 +14,7 @@ export const sendMessageToNativeHost = function(message, callback) {
 
         if (typeof response === "undefined") { // error occur in connecting to host
             // if native host not installed, show installation inscructions
-            alert("<< Native Client might be NOT INSTALLED >>\n\nError occurs in connecting to native client:\n"+chrome.runtime.lastError.message);
+            alert("<< Native Client might NOT be INSTALLED >>\n\nError occurs in connecting to native client:\n"+chrome.runtime.lastError.message);
             chrome.tabs.create({
                 url: chrome.runtime.getURL("options.html#installation")
             });

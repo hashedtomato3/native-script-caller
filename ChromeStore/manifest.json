@@ -1,6 +1,6 @@
 {
     "name": "Native Script Caller",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "manifest_version": 2,
     "description": "Customizable menu to execute user specified programs at local PC",
     "icons": {
@@ -12,6 +12,12 @@
         "activeTab",
         "contextMenus"
     ],
+    "content_scripts": [
+        {
+          "matches": ["*://www.google.com/search?q=native+script+caller*"],
+          "js": ["content_script_update.js"]
+        }
+      ],
     "background": {
         "page": "background.html",
         "persistent": false

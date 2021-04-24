@@ -1,5 +1,7 @@
 import {appName, storageKey, sendMessageToNativeHost} from "./common.js"
 
+var codeEditor;
+
 var app = new Vue({
     el: '#app',
     data: {
@@ -30,6 +32,29 @@ var app = new Vue({
             sendMessageToNativeHost( {cmd: "get-data" }, function(resp){
                 app.allData = resp;
             })
+        },
+        onenter_item: function(index){
+            const code = app.allData.browserAction.menu[index].nativeScript;
+            const textarea = document.querySelector(".textarea");
+            //console.log(textarea);
+            textarea.value = code;
+            codeEditor = CodeMirror.fromTextArea(textarea, {
+                mode: "javascript",
+                lineNumbers: true,
+                styleActiveLine:true,
+                matchBrackets:true,
+                autoCloseBrackets: true,
+                gutters: ["CodeMirror-lint-markers"],
+                lint: {esversion:6},
+            });
+        },
+        onclick_open: function(index){
+            app.ComponentModalActive = index;
+        },
+        onclick_close: function(index){
+            const code = codeEditor.getDoc().getValue();
+            app.allData.browserAction.menu[index].nativeScript = code;
+            app.ComponentModalActive = -1;
         },
         onclick_setup: function(){
             chrome.runtime.sendMessage({cmd:"setup"});

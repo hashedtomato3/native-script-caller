@@ -2,10 +2,28 @@
 <html style="height:100%">
 <head>
     <meta charset="utf-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <!--- Buefy -->
     <link rel="stylesheet" href="lib/buefy/buefy.min.css">
+    <!-- CodeMirror -->
+    <script src="lib/codemirror-5.60.0/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="lib/codemirror-5.60.0/lib/codemirror.css">
+    <script src="lib/codemirror-5.60.0/mode/javascript/javascript.js"></script>
+    <link rel="stylesheet" href="lib/codemirror-5.60.0/addon/lint/lint.css">
+    <script src="lib/codemirror-5.60.0/addon/selection/active-line.js"></script>
+    <script src="lib/codemirror-5.60.0/addon/edit/matchbrackets.js"></script>
+    <script src="lib/codemirror-5.60.0/addon/edit/closebrackets.js"></script>
+    <script src="lib/jshint-2.12.0/dist/jshint.js"></script>
+    <script src="lib/codemirror-5.60.0/addon/lint/lint.js"></script>
+    <script src="lib/codemirror-5.60.0/addon/lint/javascript-lint.js"></script>
+    <style>
+      .CodeMirror { height: auto; border: 1px solid #ddd; }
+      .CodeMirror-scroll { max-height: 50%; }
+      xx.CodeMirror pre { padding-left: 7px; line-height: 1.25; }
+      xx.banner { background: #ffc; padding: 6px; border-bottom: 2px solid silver; text-align: center }
+    </style>
+
 </head>
 <body style="xxfont-size: 12pt; xxmax-width: 80ex; height:100%">
   <div id="app" class="container" style="height:100%">
@@ -118,11 +136,11 @@
                     v-for="(menu, index) of allData.browserAction.menu"
                     :key="index"
                     style="margin:0px">
-                  <a class="panel-block" v-on:click="ComponentModalActive = index;" href="#">
+                  <a class="panel-block" v-on:click="onclick_open(index);" href="#">
                     {{menu.title}}
                   </a>
 
-                  <b-modal :active="ComponentModalActive === index" @close="ComponentModalActive = -1;" :width="1000" scroll="keep">
+                  <b-modal :active="ComponentModalActive === index" @after-enter="onenter_item(index);" @close="onclick_close(index);" :width="1000" scroll="keep">
                     <div class="card">
                         <div class="card-content">
                             <div class="level">
@@ -138,7 +156,7 @@
                                     <span>Delete</span>
                                   </div>
                                 </b-button>
-                                <b-button type="is-primary" v-on:click="ComponentModalActive = -1;" style="margin:auto 5px">
+                                <b-button type="is-primary" v-on:click="onclick_close(index);" style="margin:auto 5px">
                                   <div style="display:flex">
                                     <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                                       <path fill="currentColor" d="M19,3H16.3H7.7H5A2,2 0 0,0 3,5V7.7V16.4V19A2,2 0 0,0 5,21H7.7H16.4H19A2,2 0 0,0 21,19V16.3V7.7V5A2,2 0 0,0 19,3M15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4L13.4,12L17,15.6L15.6,17Z" />
@@ -158,10 +176,10 @@
                                   <input class="input" type="text" v-model="menu.matches" title="	(optional) An array of URL prefix match strings. The menu item is shown only if one of the string matches the URL of active page.">
                                 </b-field>
                                 <b-field label="Removal Element">
-                                  <input class="input" type="text" v-model="menu.removal" title="	(optional)">
+                                  <input class="input" type="text" v-model="menu.removal" title="	(optional) Semicolon-separated CSS selectors. The elements selected by the CSS selectors are excluded in HTML sent to the native client.">
                                 </b-field>
                                 <b-field label="Native Script">
-                                  <textarea class="textarea" v-model="menu.nativeScript" title="Native script" rows="15"></textarea>
+                                  <textarea class="textarea" title="Native script" rows="15"></textarea>
                                 </b-field>                
                               </form>
                             </div>              
@@ -208,7 +226,7 @@
                   </tr>
                   <tr>
                     <td>menu item: Removal</td>
-                    <td>(optional) Under Construction.
+                    <td>(optional) Semicolon-separated CSS selectors. The elements selected by the CSS selectors are excluded in HTML sent to the native client.
                     </td>
                   </tr>
                   <tr>
@@ -221,6 +239,7 @@
                       info.tilte: Title of the page.<br>
                       info.frames[n].html: HTML text of frame document in the page.<br>
                       info.frame[n].id: Id of the frame in the page.
+                      info.frame[n].name: name of the frame in the page.
                     </td>
                   </tr>
                 </table>
@@ -250,11 +269,11 @@
             <br>
             <p class="subtitle is-6">Update Setup</p>
             After modificaion of the above <code>customize/*</code> files,
-            click the following button to refresh setup.
+            click the following button or link to refresh setup.
             <br>
-            <button class="button is-primary" v-on:click="onclick_setup">Update Setup</button>
-            <br>
-            <br>
+            <button class="button is-primary" v-on:click="onclick_setup">Update Setup</button><br>
+            <a href="https://www.google.com/search?q=+Chrome+Store+Native+Script+Caller">Link</a>
+            <br><br><br>
           </div>
 
           <!-- Link -->

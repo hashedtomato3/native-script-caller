@@ -1,0 +1,391 @@
+<template>
+  <div id="app" class="container" style="height:100%">
+
+    <div style="xxbackground-color:red;">
+      <b-navbar class="hero is-link" fixed-top="true">
+        <template #brand>
+          <b-navbar-item href="#">
+            <p class="title is-4">Chrome Extension [{{extensionName}}]</p>
+          </b-navbar-item>
+        </template>
+      </b-navbar>
+
+      <div style="display:flex; height:90%">
+
+        <b-menu class="box" style="min-width:23ex">
+          <b-menu-list label="Menu">
+            <b-menu-item icon="account" id="abcde" label="About" v-model:active="menuActiveAbout"></b-menu-item>
+            <b-menu-item icon="account" label="Installation" v-model:active="menuActiveInstallation"></b-menu-item>
+            <b-menu-item icon="account" label="Setup" v-model:active="menuActiveSetup"></b-menu-item>
+            <b-menu-item icon="account" label="Manual" v-model:active="menuActiveManual"></b-menu-item>
+            <b-menu-item icon="account" label="Link" v-model:active="menuActiveLink"></b-menu-item>
+          </b-menu-list>
+        </b-menu>
+
+        <div class="fr_main block" style="margin: 3ex; height:100%; width:70vw">
+
+          <!-- About -->
+          <div v-if="menuActiveAbout">
+            <p class="subtitle">About</p>
+            <p>
+              This extension provides a customizable icon and menu in Chrome toolbar,
+              by which you can run your Node.js scripts on the local PC.
+            </p>
+
+          </div>
+
+          <!-- Installation -->
+          <div v-if="menuActiveInstallation" style="height:100%">
+            <p class="subtitle is-4">Installation</p>
+
+            <p>This extension requires installing <b>native client</b> in the local Windows PC.</p>
+            <br>
+
+            <p class="subtitle is-5">Check installation status of Native Client</p>
+         
+            <b-button type="is-primary" v-on:click="onclick_checkinstallation">check installation</b-button>
+            <br><br>
+        
+            <p class="subtitle is-5">How to install Native Client</p>
+            <div>
+              <ol style="margin: 0 4ex">
+                <li>Download the following ZIP file and extract it in a local folder.<br>
+                     -> the folder named "host" will be created.
+                  <ul>
+                    <li><a href="/host.zip" download="host.zip">host.zip</a></li>
+                  </ul>
+                </li>
+                <li>Download the following file and store it in the folder "host". <br>
+                    (The file name must be "manifest.json".)
+                  <ul>
+                    <li><a id="manifest_link" v-bind:href="manifestDownloadLink" download="manifest.json">manifest.json</a></li>
+                  </ul>
+                </li>
+                <li>Install Node.js. Click <a href="https://nodejs.org/" target="_blank">here</a> to download installer.</li>
+                <li>Double-click <code>install.bat</code> in the folder "host" to install native client.</li>
+                <li>To uninstall the native client, double-click <code>uninstall.bat</code>.</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- Setup -->
+          <div v-if="menuActiveSetup">
+            <div class="level">
+              <div class="level-left">
+                <p class="subtitle">Setup of menu and user scripts</p>
+              </div>
+              <div class="level-right">              
+                <button class="button is-primary" v-on:click="onclick_load">Load</button>
+                &nbsp;
+                <button class="button is-primary" v-on:click="onclick_save">Save</button>
+              </div>
+            </div>
+
+            <div v-if="allData" style="min-width:640px; " >
+              <b-field label="Title">
+                  <input class="input" type="text" v-model="allData.browserAction.title" title="Title of the icon (menu)">
+              </b-field>              
+              <b-field label="Icon">
+                <input class="input" type="text" v-model="allData.browserAction.icon.file" title="	Relative path name of icon image file. It should be 16x16 PNG file.">
+              </b-field>
+              <div class="level">
+                <div class="level-left">
+                  <b-field label="Menu Items"></b-field>                      
+                </div>
+                <div class="level-left">
+                  <b-button type="is-primary" size="is-small" v-on:click="onclick_add">
+                    <div style="display:flex">
+                      <svg style="width:22px;height:22px;" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" />
+                      </svg>
+                      <span> Add Item</span>
+                    </div>
+                  </b-button>    
+                </div>
+              </div>
+
+              <div style="margin:0px; padding:0px">
+                <div class="panel" animation="slide"
+                    v-for="(menu, index) of allData.browserAction.menu"
+                    :key="index"
+                    style="margin:0px">
+                  <a class="panel-block" v-on:click="onclick_open(index);" href="#">
+                    {{menu.title}}
+                  </a>
+
+                  <b-modal :active="ComponentModalActive === index" @close="onclick_close(index);" :width="1000" scroll="keep">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="level">
+                              <div class="level-left">
+                                  <p class="title is-4">{{menu.title}}</p>
+                              </div>
+                              <div class="level-right" v-bind:index="index">
+                                <b-button type="is-primary" v-on:click="onclick_delete" >
+                                  <div style="display:flex">
+                                    <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                      <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+                                    </svg>
+                                    <span>Delete</span>
+                                  </div>
+                                </b-button>
+                                <b-button type="is-primary" v-on:click="onclick_close(index);" style="margin:auto 5px">
+                                  <div style="display:flex">
+                                    <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                      <path fill="currentColor" d="M19,3H16.3H7.7H5A2,2 0 0,0 3,5V7.7V16.4V19A2,2 0 0,0 5,21H7.7H16.4H19A2,2 0 0,0 21,19V16.3V7.7V5A2,2 0 0,0 19,3M15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4L13.4,12L17,15.6L15.6,17Z" />
+                                    </svg>
+                                    <span>Close</span>
+                                  </div>
+                                </b-button>
+                              </div>            
+                            </div>
+
+                            <div class="panel-block">
+                              <form class="card" style="width:100%">
+                                <b-field label="Title">
+                                    <input class="input" type="text" v-model="menu.title" title="	Title of the menu item">
+                                </b-field>
+                                <b-field label="Matches">
+                                  <input class="input" type="text" v-model="menu.matches" title="	(optional) An array of URL prefix match strings. The menu item is shown only if one of the string matches the URL of active page.">
+                                </b-field>
+                                <b-field label="Removal Element">
+                                  <input class="input" type="text" v-model="menu.removal" title="	(optional) Semicolon-separated CSS selectors. The elements selected by the CSS selectors are excluded in HTML sent to the native client.">
+                                </b-field>
+                                <b-field label="Native Script">
+                                  <!----                                  
+                                  <textarea class="textarea" title="Native script" rows="15"></textarea>
+                                  --->
+                                  <codemirror v-model="menu.nativeScript" :options="cmOptions" />
+                                </b-field>                
+                              </form>
+                            </div>              
+                        </div>
+                    </div>
+                  </b-modal>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Manual -->
+          <div v-if="menuActiveManual" class="is-fullscreen">
+            <p class="subtitle">Manual</p>
+   
+            <p class="subtitle is-6">Input Items</p>
+            <ul>
+              <li>
+                <table border=1>
+                  <tr>
+                    <th>Item Title</th>
+                    <th>Description</th>
+                  </tr>
+                  <tr>
+                    <td>title</td>
+                    <td>Title of the icon(menu)</td>
+                  </tr>
+                  <tr>
+                    <td>icon</td>
+                    <td>Relative path name of icon image file from "host" folder. It should be 16x16 PNG file.</td>
+                  </tr>
+                  <tr>
+                    <td>Menu Items</td>
+                    <td>List of popup menu items</td>
+                  </tr>
+                  <tr>
+                    <td>menu item: title</td>
+                    <td>Title of the menu item</td>
+                  </tr>
+                  <tr>
+                    <td>menu item: matches</td>
+                    <td>(optional) Comma-separated list of URL prefix match strings.
+                      The menu item is shown only if one of the string matches the URL of active page. Refer <a href="https://developer.chrome.com/docs/extensions/mv3/match_patterns/">pattern format.</a></td>
+                  </tr>
+                  <tr>
+                    <td>menu item: Removal</td>
+                    <td>(optional) Semicolon-separated CSS selectors. The elements selected by the CSS selectors are excluded in HTML sent to the native client.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>menu item: native Script</td>
+                    <td>(optional) Native javascript code that is executed by Node.js in local PC.
+                      This code must contain the definition of <code>function NativeScriptFunction(info)</code>, which is executed when menu is clicked.
+                      <code>info</code> is a object of information of Web Page in Active tab:<br>
+                      info.url: URL of the page.<br>
+                      info.html: HTML text of the page<br>
+                      info.tilte: Title of the page.<br>
+                      info.frames[n].html: HTML text of frame document in the page.<br>
+                      info.frame[n].id: Id of the frame in the page.
+                      info.frame[n].name: name of the frame in the page.
+                    </td>
+                  </tr>
+                </table>
+              </li>
+            </ul>
+
+            <br><br>
+            <p class="subtitle is-6">Debug</p>
+  
+            Select the blue link of "background.html" next to Inspect views
+            in the Chrome extension management page,
+            to open the Chrome DevTools panel for the background script.
+            Most of log messages from this extension appear in the Console tab.
+            See <a href="https://developer.chrome.com/apps/tut_debugging">here.</a>
+
+            <br>
+            <br>
+            <p class="subtitle is-6">Where setup info stored</p>
+
+            Menu specification and Injection and Native scripts are stored in
+            <code>customize/browserAction.json</code> file
+            in native client "host" folder.
+
+            Note that the host folder path is shown by clicking check installation button in Installation section.
+
+            <br>
+            <br>
+            <p class="subtitle is-6">Update Setup</p>
+            After modificaion of the above <code>customize/*</code> files,
+            click the following button or link to refresh setup.
+            <br>
+            <button class="button is-primary" v-on:click="onclick_setup">Update Setup</button><br>
+            <a href="https://www.google.com/search?q=+Chrome+Store+Native+Script+Caller">Link</a>
+            <br><br><br>
+          </div>
+
+          <!-- Link -->
+          <div v-if="menuActiveLink">
+            <p class="subtitle">Links</p>
+            <ul>
+              <li><a id="store_page" v-bind:href="storeLink" target="_blank">Chrome Web Store Page</a> </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>
+
+<script>
+  import {appName, sendMessageToNativeHost} from "./common.js"
+
+  import { codemirror } from 'vue-codemirror';
+  import 'codemirror/lib/codemirror.css'
+  import 'codemirror/mode/javascript/javascript.js'
+  import 'codemirror/addon/lint/lint.css'
+  import 'codemirror/addon/selection/active-line.js'
+  import 'codemirror/addon/edit/matchbrackets.js'
+  import 'codemirror/addon/edit/closebrackets.js'
+  //import './lib/jshint-2.12.0/dist/jshint.js'
+  import 'codemirror/addon/lint/lint.js'
+  import 'codemirror/addon/lint/javascript-lint.js'
+  
+  export default {
+      name: 'App',
+      data: function() {
+        return {
+                menuActiveAbout:false,
+                menuActiveInstallation:false,
+                menuActiveSetup:false,
+                menuActiveManual:false,
+                menuActiveLink:false,
+                isOpen: -1,
+                ComponentModalActive:-1,
+                allData:null,
+                extensionName: chrome.runtime.getManifest().name,
+                manifestDownloadLink: null,
+                storeLink : "https://chrome.google.com/webstore/detail/"+chrome.runtime.id,
+                cmOptions: {
+                  mode: "javascript",
+                  lineNumbers: true,
+                  styleActiveLine:true,
+                  matchBrackets:true,
+                  autoCloseBrackets: true,
+                  gutters: ["CodeMirror-lint-markers"],
+                  lint: {esversion:6},
+                },
+              };
+      },
+      computed: {
+      },
+      methods: {
+          isComponentModalActive: function(/*index*/){
+              return this.ComponentModalActive === 0;
+          },
+          onclick_save: function() {
+              sendMessageToNativeHost( {cmd: "save-data", data:this.allData}, function(/*resp*/){
+                  chrome.runtime.sendMessage({cmd:"setup"});
+              })
+          },
+          onclick_load: function() {
+              const that = this;
+              console.log(this)
+              sendMessageToNativeHost( {cmd: "get-data" }, function(resp){
+                  console.log(resp)
+                  console.log(that)
+                  that.allData = resp;
+              })
+          },
+
+          onclick_open: function(index){
+              this.ComponentModalActive = index;
+          },
+          onclick_close: function(/*index*/){
+              this.ComponentModalActive = -1;
+          },
+          onclick_setup: function(){
+              chrome.runtime.sendMessage({cmd:"setup"});
+          },
+          onclick_checkinstallation: function(){
+              sendMessageToNativeHost({cmd:"get-data"}, response => {
+                  alert(`<< INSTALLATION OK >>\n\nNative client is installed in ${response.cwd}.`)
+              });           
+          },
+          onclick_add: function() {
+              this.allData.browserAction.menu.push({title:"New Title", matches:""});
+          },
+          onclick_delete: function(evt) {
+              let i = evt.target.closest("div[index]").getAttribute("index");
+              this.allData.browserAction.menu.splice(i, 1);
+              this.ComponentModalActive = -1;
+          },
+
+      },
+      components: {
+        codemirror,
+      },
+      created: function(){
+        // set manifest download link
+        const manifest = {
+            "name": appName,
+            "description": "Customizable menu to run user scripts at browser and/or local PC.",
+            "path": "host.bat",
+            "type": "stdio",
+            "allowed_origins": [
+                `chrome-extension://${chrome.runtime.id}/`,
+            ]
+        };
+        const manifestJson = JSON.stringify(manifest, null, '\t');
+        const blob = new Blob([manifestJson], {
+            type: 'text/plain',
+        });
+        this.manifestDownloadLink = URL.createObjectURL(blob);
+
+        // short cut to installation section
+        if( location.hash === "#installation"){
+            this.menuActiveInstallation = true;
+        }
+      }
+  };
+</script>
+
+<style>
+#appxx {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>

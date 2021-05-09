@@ -267,8 +267,6 @@
 </template>
 
 <script>
-  import {appName, sendMessageToNativeHost} from "./common.js"
-
   import { codemirror } from 'vue-codemirror';
   import 'codemirror/lib/codemirror.css'
   import 'codemirror/mode/javascript/javascript.js'
@@ -280,6 +278,19 @@
   import 'codemirror/addon/lint/lint.js'
   import 'codemirror/addon/lint/javascript-lint.js'
   
+  // Promisified version of chrome extension APIs
+  function chromeRuntimeSendMessage(message) {
+      return new Promise((resolve, reject) => {
+          chrome.runtime.sendMessage(message, (response) => {
+              if (chrome.runtime.lastError) {
+                  return reject(chrome.runtime.lastError);
+              }
+              resolve(response);
+          });
+      });
+  }
+  
+
   export default {
       name: 'App',
       data: function() {
@@ -312,19 +323,15 @@
           isComponentModalActive: function(/*index*/){
               return this.ComponentModalActive === 0;
           },
-          onclick_save: function() {
-              sendMessageToNativeHost( {cmd: "save-data", data:this.allData}, function(/*resp*/){
-                  chrome.runtime.sendMessage({cmd:"setup"});
-              })
+          onclick_save: async function() {
+              const resp = await chromeRuntimeSendMessage({cmd:"send-native-message", msg:{cmd: "save-data", data:this.allData}});
+              if( "error" in resp ) { throw resp }
+              await chromeRuntimeSendMessage({cmd:"setup"});
           },
-          onclick_load: function() {
-              const that = this;
-              console.log(this)
-              sendMessageToNativeHost( {cmd: "get-data" }, function(resp){
-                  console.log(resp)
-                  console.log(that)
-                  that.allData = resp;
-              })
+          onclick_load: async function() {
+              const resp = await chromeRuntimeSendMessage({cmd:"send-native-message", msg:{cmd:"get-data"}});
+              if( "error" in resp ) { throw resp }
+              this.allData = resp;
           },
 
           onclick_open: function(index){
@@ -333,31 +340,42 @@
           onclick_close: function(/*index*/){
               this.ComponentModalActive = -1;
           },
-          onclick_setup: function(){
-              chrome.runtime.sendMessage({cmd:"setup"});
+          onclick_setup: async function(){
+              const resp = await chromeRuntimeSendMessage({cmd:"setup"});
+              if( "error" in resp ) { throw resp }
+              alert("Setup OK.")
           },
-          onclick_checkinstallation: function(){
-              sendMessageToNativeHost({cmd:"get-data"}, response => {
-                  alert(`<< INSTALLATION OK >>\n\nNative client is installed in ${response.cwd}.`)
-              });           
+          onclick_checkinstallation: async function(){
+              const response = await chromeRuntimeSendMessage({cmd:"send-native-message", msg:{cmd:"get-data"}});
+              if( !("error" in response) ) {
+                alert(`<< INSTALLATION OK >>\n\nNative client is installed in ${response.cwd}.`)
+              }
           },
           onclick_add: function() {
-              this.allData.browserAction.menu.push({title:"New Title", matches:""});
+              this.allData.browserAction.menu.push({title:"New Title", matches:"script"});
           },
           onclick_delete: function(evt) {
               let i = evt.target.closest("div[index]").getAttribute("index");
               this.allData.browserAction.menu.splice(i, 1);
               this.ComponentModalActive = -1;
           },
-
+          alertInstallation(errmes) {
+                this.$buefy.dialog.alert({
+                    title: 'Native Client might NOT be installed',
+                    message: "<b>Error occurs in connecting to native client:</b><br>" + errmes,
+                    confirmText: 'OK'
+                })
+          },
       },
       components: {
         codemirror,
       },
-      created: function(){
+      created: async function(){
+
+        const common = await chromeRuntimeSendMessage({cmd:"get-common"});
         // set manifest download link
         const manifest = {
-            "name": appName,
+            "name": common.appName,
             "description": "Customizable menu to run user scripts at browser and/or local PC.",
             "path": "host.bat",
             "type": "stdio",
@@ -374,6 +392,9 @@
         // short cut to installation section
         if( location.hash === "#installation"){
             this.menuActiveInstallation = true;
+            const params = new URLSearchParams(location.search);
+            console.log(params.get("errmes"));
+            this.alertInstallation(params.get("errmes"));
         }
       }
   };

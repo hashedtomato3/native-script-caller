@@ -1,135 +1,200 @@
 // Copyright (C) 2020 hashedtomato3@gmail.com
 // License: MIT 
 
-// import common parameters
-import {appName, storageKey, sendMessageToNativeHost} from "./common.js"
+// common parameters
+const common = {};
+common.appName = "com.node.native_script_caller"
+common.storageKey = common.appName + ".storage_key"
 
-// on installation of this extension, setup browser action icon and menu
+// Promisified function of Chrome extension APIs
+function chromeStorageLocalGet(key) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.get(key, (items) => {
+            if (chrome.runtime.lastError) {
+                return reject(chrome.runtime.lastError);
+            }
+            resolve(items);
+        });
+    });
+}
+function chromeStorageLocalSet(items) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.set(items, () => {
+            if (chrome.runtime.lastError) {
+                return reject(chrome.runtime.lastError);
+            }
+            resolve(null);
+        });
+    });
+}
+function chromeTabsSendMessage(tabId, message) {
+    return new Promise((resolve, reject) => {
+        chrome.tabs.sendMessage(tabId, message, {}, (response) => {
+            if (chrome.runtime.lastError) {
+                return reject(chrome.runtime.lastError);
+            }
+            resolve(response);
+        });
+    });
+}
+
+// send to native host
+function sendMessageToNativeHost(message) {
+    console.debug("request to native host:")
+    console.debug(message)
+    return new Promise((resolve, reject) => {
+        // send message to native host
+        chrome.runtime.sendNativeMessage(common.appName, message, async (response) => {
+            console.debug("response from native host: ");
+            console.debug(response);
+            // if error occur in connecting to host, show installation inscruction page
+            if (typeof response === "undefined") {
+                const errmes = chrome.runtime.lastError ? chrome.runtime.lastError.message : "";
+                const url = chrome.runtime.getURL("vue/dist/index.html")+"?errmes="+encodeURIComponent(errmes)+"#installation";
+                const tab = await chrome.tabs.create({url: url});
+            }
+            // if error occur
+            if (chrome.runtime.lastError) {
+                console.error(chrome.runtime.lastError);
+                return reject(chrome.runtime.lastError);
+            }
+            // if error in native code
+            if( response && "error" in response ) {
+                response.source = "native script"
+                console.error(response);
+                return reject(response);
+            }
+            // if no error, call callback with response
+            resolve(response);
+        });
+    });
+}
+
+
+// on installation of this extension, load from native host and setup menu
 chrome.runtime.onInstalled.addListener((details)=>{
-    if( details.reason === "install" || details.reason === "install" ){ // on install or 
-        setupAll(null);
+    if( details.reason === "install"){ // on install
+        setupAll();
     }
 });
 
-// on startup of browser, setup browser action icon in Chrome toolbar
-chrome.runtime.onStartup.addListener(createBrowserActionIcon);
+// on startup of browser, setup menu
+chrome.runtime.onStartup.addListener(createMenu);
 
 // on message from options page or popup menu
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if( message.cmd == "setup" ) { // on click of setup botton in option page
         // setup browser action icon and menu
-        setupAll(null, "Setup OK.")
-    } else if( message.cmd === "click" ){ // on click of browser action menu item
-        actionForClickMenuItem(message, sendResponse)
-    }
+        setupAll()
+        .then((value)=>sendResponse(value))
+        .catch((err)=>sendResponse({error:err.error, name:err.name, message:err.message, stack:err.stack, source:err.source}));
+    } else if( message.cmd === "click" ){ // on click of menu item
+        actionForClickMenuItem(message)
+        .then((value)=>sendResponse(value))
+        .catch((err)=>sendResponse({error:err.error, name:err.name, message:err.message, stack:err.stack, source:err.source}));
+    } else if( message.cmd === "get-common" ){ // 
+        sendResponse(common);
+    } else if( message.cmd === "send-native-message" ){
+        sendMessageToNativeHost(message.msg)
+        .then((value)=>sendResponse(value))
+        .catch((err)=>sendResponse({error:err.error, name:err.name, message:err.message, stack:err.stack, source:err.source}));
+    }    
     return true; // this is nessesary for response to caller page
 });
 
 // on clicking context menu
-chrome.contextMenus.onClicked.addListener(function(info, tab){
-    console.log(info)
+chrome.contextMenus.onClicked.addListener(async function(info, tab){
+    //console.debug(info)
     if( /^menuItem_[0-9]+$/.test(info.menuItemId) ) {
         const id = parseInt(info.menuItemId.slice(9), 10);
-        console.info("sending message for " + id)
-        actionForClickMenuItem({cmd:"click", idx:id}, function(resp){});   
+        //console.debug("sending message for " + id)
+        await actionForClickMenuItem({cmd:"click", idx:id});   
     }
 });
 
 // setup browser action icon and menu
-function setupAll(details, successMessage = "") {
-    sendMessageToNativeHost({cmd: "get-data"}, function(response){
-        // store get info to storage
-        const item = {
-            [storageKey] : response,
-        };
-        chrome.storage.local.set(item, function() {
-            console.log("saved to storage:")
-            console.log(item)
-            createBrowserActionIcon(successMessage)
-        });
-    });
+async function setupAll() {
+    // get info from Native Host
+    const response = await sendMessageToNativeHost({cmd: "get-data"});
+    // store to storage
+    const item = {[common.storageKey] : response};
+    const r = await chromeStorageLocalSet(item);
+    console.debug("saved to storage:")
+    console.debug(item)
+    // create menu
+    await createMenu();
+    return true;
 }
-
 
 // setup browser action icon
-function createBrowserActionIcon(successMessage = "") {
-console.log("get message ")
-    // load icon info from storage
-    chrome.storage.local.get(storageKey, function(data){        
-        console.info("load browser action icon data from local storage:")
-        console.log(data[storageKey].browserAction);
-        // set title
-        let title = data[storageKey].browserAction.title;
-        chrome.browserAction.setTitle({title:title});
-        // set icon image
-        let icon = data[storageKey].browserAction.icon;
-        if( icon ){
-            // convert data URL to ImageData
-            let img = new Image();
-            img.src = icon;
-            img.onload = function(){
-                let canvas = document.createElement('canvas');
-                canvas.width = 16;
-                canvas.height = 16;
-                let context = canvas.getContext('2d');
-                context.drawImage(img, 0, 0, 16, 16);
-                let icon = context.getImageData(0, 0, 16, 16);
-                // set icon image
-                chrome.browserAction.setIcon({imageData:icon})    
-            }
+async function createMenu() {
+    // load menu info from storage
+    const data = await chromeStorageLocalGet(common.storageKey);
+    console.debug("load menu info from local storage:")
+    console.debug(data[common.storageKey].browserAction);
+    // set title of browser action
+    let title = data[common.storageKey].browserAction.title;
+    chrome.action.setTitle({title:title});
+    // set icon image
+    let icon = data[common.storageKey].browserAction.icon;
+    if( icon ){
+        // convert data URL to ImageData
+        var byteString = atob( icon.dataURL.split( "," )[1] ) ;
+        var mimeType = icon.dataURL.match( /(:)([a-z\/]+)(;)/ )[2] ;
+        for( var i=0, l=byteString.length, content=new Uint8Array( l ); l>i; i++ ) {
+            content[i] = byteString.charCodeAt( i ) ;
         }
-        console.info("icon setup finished.")
+        var blob = new Blob( [ content ], {type: mimeType});
+        const imageBitmap = await createImageBitmap(blob);
+        const canvas = new OffscreenCanvas(16, 16);
+        let context = canvas.getContext('2d');
+        context.drawImage(imageBitmap, 0, 0, 16, 16);
+        let ic = context.getImageData(0, 0, 16, 16);
+        // set icon image
+        chrome.action.setIcon({imageData:ic})        
+    }
 
-        // add context top menu
-        chrome.contextMenus.removeAll();
-        var parentId = chrome.contextMenus.create({
-            "id" : "menuItem_top",
-            "title" : title,
+    // add top context menu
+    chrome.contextMenus.removeAll();
+    var parentId = chrome.contextMenus.create({
+        "id" : "menuItem_top",
+        "title" : title,
+        "type" : "normal",
+        "contexts" : ["all"],
+    });
+    // add child contxt menus
+    const menu = data[common.storageKey].browserAction.menu;
+    menu.forEach(function(m, idx) {
+        // add a child menu item
+        chrome.contextMenus.create({
+            "id" : "menuItem_" + idx,
+            "title" : m.title,
             "type" : "normal",
             "contexts" : ["all"],
+            "documentUrlPatterns" : m.matches.split(","),
+            "parentId" : parentId
         });
-        // add contxt child menu items
-        const menu = data[storageKey].browserAction.menu;
-        menu.forEach(function(m, idx) {
-            // add a child menu item
-            console.log("add menu " + idx)
-            chrome.contextMenus.create({
-                "id" : "menuItem_" + idx,
-                "title" : m.title,
-                "type" : "normal",
-                "contexts" : ["all"],
-                "documentUrlPatterns" : m.matches.split(","),
-                "parentId" : parentId
-            }, () => {
-                if( chrome.runtime.lastError ) {
-                    alert(chrome.runtime.lastError.message);
-                }
-            });
-        });
-
-
-        if(successMessage) {
-            alert(successMessage);
-        }
     });
+    console.debug("menu setup finished.")
+    return true;
 }
 
-// on click of browser action menu item
-function actionForClickMenuItem(message, sendResponse) {
-    console.info("---- menu item clicked ----")
+// on clicking menu item
+async function actionForClickMenuItem(message) {
+    console.debug("---- menu item clicked ----")
     // load injection code from local storage
-    chrome.storage.local.get(storageKey, function(storageData){
-        // execute injection code
-        console.log(storageData[storageKey].browserAction)
-
-        const removal = storageData[storageKey].browserAction.menu[message.idx].removal;
-        const code = `
+    const storageData = await chromeStorageLocalGet(common.storageKey);
+    //console.debug(storageData)
+    // injection code
+    function injectionCode(){
         function getPageHTML(removal) {
             function document2html(doc, removal) {
                 const d = doc.cloneNode(true);
-                removal.split(";").forEach(r => {
-                    d.querySelectorAll(r).forEach(function(e){ e.remove(); });
-                });
+                if(removal){
+                    removal.split(";").forEach(r => {
+                        d.querySelectorAll(r).forEach(function(e){ e.remove(); });
+                    });    
+                }
                 //console.log(doc.querySelectorAll("script").length)
                 return ''+d.getElementsByTagName('html')[0].innerHTML+'';
             }
@@ -140,7 +205,7 @@ function actionForClickMenuItem(message, sendResponse) {
                 var title = document.title;
                 var frames = [];
                 document.querySelectorAll("frame").forEach(function(e){
-                    console.log(e.id);
+                    //console.log(e.id);
                     const d = e.contentDocument;
                     //console.log(d);
                     if(d) {
@@ -152,41 +217,51 @@ function actionForClickMenuItem(message, sendResponse) {
                     }
                 })
                 const msg = {title:title, url:url, html:html, frames:frames};
-                console.log("message length: "+ JSON.stringify(msg).length);
+                console.debug("message length: "+ JSON.stringify(msg).length);
                 //console.log(msg);
                 return msg;
             } catch(err) {
-                // when error, return object should have "error" key
-                return {error:err.name, message:err.message, stack:err.stack}
+                console.error(err);
+                // when error, return object should have "error" key                
+                return {error:true, name:err.name, message:err.message, stack:err.stack, source:"injection code"}
+//                return {error:err, source:"injection code"}
             }
         }
-        getPageHTML("${removal}");`;
-            
-        chrome.tabs.executeScript({code:code}, function(injectionCodeResults){
-            console.info("return value from injection code:");
-            console.log(injectionCodeResults);
-            if(injectionCodeResults[0].error && injectionCodeResults[0].message){
-                // return error from injection code
-                sendResponse(injectionCodeResults[0]); // response to popup.js
-                return;
-            }
-            // send message to native host to execute native code
-            let nativeScript = storageData[storageKey].browserAction.menu[message.idx].nativeScript;
-            if( ! /^\s*$/.test(nativeScript) ) { // if native script exists
-                let msg = {cmd:"click", idx:message.idx, info:injectionCodeResults[0]}
-                console.info("request to native host:")
-                console.log(msg)
-                chrome.runtime.sendNativeMessage(appName, msg, response => {
-                    console.info("response from native host:");
-                    console.log(response);
-                    sendResponse(response); // response to popup.js
-                });    
-            }
-            //return true;
-        });
-        //return true;
-    });    
+        // listener
+        function injectionListener(message, sender, sendResponse){
+            // remove self
+            chrome.runtime.onMessage.removeListener(injectionListener);
+            // execute and response
+            const pageInfo = getPageHTML(message.removal);
+            sendResponse(pageInfo);
+        }
+        // add message listener
+        chrome.runtime.onMessage.addListener(injectionListener);
+    }
+    // get active tab ID
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true })
+    const tabId = tabs[0].id;
+    // execute injection code (set message listener)
+    const r = await chrome.scripting.executeScript({
+        target: {tabId: tabId, allFrames:false},
+        function:injectionCode
+    });
+    // send message to injection code
+    const removal = storageData[common.storageKey].browserAction.menu[message.idx].removal;
+    const injectionCodeResults = await chromeTabsSendMessage(tabId, {removal:removal});
+    console.info("return value from injection code:");
+    console.log(injectionCodeResults);
+    // check error in injection code
+    if(injectionCodeResults.error){
+        throw injectionCodeResults; // return error
+    }
+    // send message to native host to execute native code
+    let nativeScript = storageData[common.storageKey].browserAction.menu[message.idx].nativeScript;
+    if( ! /^\s*$/.test(nativeScript) ) { // if native script exists
+        let msg = {cmd:"click", idx:message.idx, info:injectionCodeResults};
+        const response = await sendMessageToNativeHost(msg);
+        return response; // response to popup.js
+    }
+    return false;
 }
-
-
 

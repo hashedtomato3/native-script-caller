@@ -42,7 +42,7 @@
             <br>
 
             <p class="subtitle is-5">Check installation status of Native Client</p>
-         
+            <span style="width:10ex"></span>
             <b-button type="is-primary" v-on:click="onclick_checkinstallation">check installation</b-button>
             <br><br>
         
@@ -88,11 +88,11 @@
               <b-field label="Icon">
                 <input class="input" type="text" v-model="allData.browserAction.icon.file" title="	Relative path name of icon image file. It should be 16x16 PNG file.">
               </b-field>
-              <div class="level">
-                <div class="level-left">
+              <div class="level" style="margin:0px">
+                <div class="level-left" style="margin:0px">
                   <b-field label="Menu Items"></b-field>                      
                 </div>
-                <div class="level-left">
+                <div class="level-left" style="margin:0px">
                   <b-button type="is-primary" size="is-small" v-on:click="onclick_add">
                     <div style="display:flex">
                       <svg style="width:22px;height:22px;" viewBox="0 0 24 24">

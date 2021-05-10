@@ -4,7 +4,15 @@
     <style>
       input {
         width: 100%;
-        margin: 0px;
+        padding: 6px;
+        margin: 1px;
+        border:0;
+        border-radius:0;
+        display:block;
+        background-color: #f0f0f0;
+      }
+      input:hover {
+        background-color: #dddddd;
       }
       p {
         width: 100%;
@@ -13,7 +21,7 @@
   </head>
   <body style="font-size: 13pt">
     <div style="text-align:right; margin:0px; padding:0px">
-      <input id="close" type="button" value="X" style="width:2em; border:none">
+      <input id="close" type="button" value="X" style="width:2em; border:none; display:inline">
     </div>
     <div id="title" style="white-space: nowrap; margin:0px"></div>
     <div id="content"></div>

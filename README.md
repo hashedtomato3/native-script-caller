@@ -9,7 +9,7 @@ Chrome Extension that calls native node.js script from browser.
 * In Chrome Web Store Developp]er dashboard, upload zip file to Chrome Web Store
 * The files in publish foler are used to fill in dashboard forms.
 
-### versions
+### Used versions
 
 ```
 node -v
@@ -46,15 +46,20 @@ npm install vue-codemirror
     }
 
 ```
+
+OR
+
 ```
-npm install
+cd vue
+npm install  // install all for ./packatge.json
 ```
 
-### Vue build and deploy
+### Build and deploy
+
 ```
 cd vue
 // npm run lint
 // npm run serve
-npm run build
-DEPLOY.bat
+npm run build  // compile ./public and ./src  into ./dist
+DEPLOY.bat     // copy ./dist to ChromeStore\vue\dist, and zip ChromeStore
 ```

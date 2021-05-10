@@ -14,11 +14,11 @@
 
         <b-menu class="box" style="min-width:23ex">
           <b-menu-list label="Menu">
-            <b-menu-item icon="account" id="abcde" label="About" v-model:active="menuActiveAbout"></b-menu-item>
-            <b-menu-item icon="account" label="Installation" v-model:active="menuActiveInstallation"></b-menu-item>
-            <b-menu-item icon="account" label="Setup" v-model:active="menuActiveSetup"></b-menu-item>
-            <b-menu-item icon="account" label="Manual" v-model:active="menuActiveManual"></b-menu-item>
-            <b-menu-item icon="account" label="Link" v-model:active="menuActiveLink"></b-menu-item>
+            <b-menu-item icon="account" id="abcde" label="About" v-model="menuActiveAbout"></b-menu-item>
+            <b-menu-item icon="account" label="Installation" v-model="menuActiveInstallation"></b-menu-item>
+            <b-menu-item icon="account" label="Setup" v-model="menuActiveSetup"></b-menu-item>
+            <b-menu-item icon="account" label="Manual" v-model="menuActiveManual"></b-menu-item>
+            <b-menu-item icon="account" label="Link" v-model="menuActiveLink"></b-menu-item>
           </b-menu-list>
         </b-menu>
 
@@ -76,7 +76,7 @@
               </div>
               <div class="level-right">              
                 <button class="button is-primary" v-on:click="onclick_load">Load</button>
-                &nbsp;
+                <span style="width:1ex"> </span>
                 <button class="button is-primary" v-on:click="onclick_save">Save</button>
               </div>
             </div>
@@ -352,7 +352,17 @@
               }
           },
           onclick_add: function() {
-              this.allData.browserAction.menu.push({title:"New Title", matches:"script"});
+              this.allData.browserAction.menu.push({
+                title:"New Title", 
+                removal:"script",
+                nativeScript:`
+// function NativeScriptFunction(info)
+//   - info: information of web page in active tab
+//   - return value: object passed to the browser extension
+function NativeScriptFunction(info) {
+  // user logic
+}`
+              });
           },
           onclick_delete: function(evt) {
               let i = evt.target.closest("div[index]").getAttribute("index");

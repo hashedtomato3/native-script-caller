@@ -29,7 +29,7 @@
             <p class="subtitle">About</p>
             <p>
               This extension provides a custom menu in Chrome toolbar and context menu.<br>
-              By clicking it, you can run your Node.js scripts on the local PC.
+              By clicking it, you can run your Node.js script on the local PC.
             </p>
 
           </div>
@@ -38,12 +38,12 @@
           <div v-if="menuActiveInstallation" style="height:100%">
             <p class="subtitle is-4">Installation</p>
 
-            <p>This extension requires installing <b>native client</b> in the local Windows PC.</p>
+            <p>This extension requires installing <b>the native client</b> in the local Windows PC.</p>
             <br>
 
             <p class="subtitle is-5">Check installation status</p>
             <span style="width:10ex"></span>
-            <b-button type="is-primary" v-on:click="onclick_checkinstallation" style="margin:0 3ex">check installation</b-button>
+            <b-button type="is-primary" outlined v-on:click="onclick_checkinstallation" style="margin:0 3ex">check installation</b-button>
             <br><br>
         
             <p class="subtitle is-5">How to install Native Client</p>
@@ -69,7 +69,7 @@
           </div>
 
           <!-- Setup -->
-          <div v-if="menuActiveSetup" style="height:100%;width:100%">
+          <div v-if="menuActiveSetup" style="height:100%">
             <div class="level">
               <div class="level-left">
                 <p class="subtitle">Setup of menu and user scripts</p>
@@ -81,25 +81,23 @@
               </div>
             </div>
 
-            <div v-if="allData" style="min-width:640px; height:100%;width:100%" >
+            <div v-if="allData" style="min-width:640px; height:100%" >
               <b-field label="Title">
-                  <input class="input" type="text" v-model="allData.browserAction.title" title="Title of the icon (menu)">
+                <input class="input" type="text" v-model="allData.browserAction.title" :title="manualData[0].description">
               </b-field>              
               <b-field label="Icon">
-                <input class="input" type="text" v-model="allData.browserAction.icon.file" title="	Relative path name of icon image file. It should be 16x16 PNG file.">
+                <input class="input" type="text" v-model="allData.browserAction.icon.file" :title="manualData[1].description">
               </b-field>
               <div class="level" style="margin:0px">
                 <div class="level-left" style="margin:0px">
                   <b-field label="Menu Items"></b-field>                      
                 </div>
                 <div class="level-left" style="margin:0px">
-                  <b-button type="is-primary" size="is-small" v-on:click="onclick_add" title="Add a menu item">
+                  <b-button type="is-primary" size="is-small" v-on:click="onclick_add">
                     <div style="display:flex">
-
                       <svg style="width:22px;height:22px;" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" />
                       </svg>
-
                     </div>
                   </b-button>    
                 </div>
@@ -109,46 +107,42 @@
                 <div class="panel" animation="slide"
                     v-for="(menu, index) of allData.browserAction.menu"
                     :key="index"
-                    style="margin:0px; height:100%;width:100%">
+                    style="margin:0px; height:100%">
                   <a class="panel-block" v-on:click="onclick_open(index);" href="#">
                     {{menu.title}}
                   </a>
 
-                  <b-modal :active="ComponentModalActive === index" @close="onclick_close(index);" :width="1500" scroll="keep" xxxcan-cancel="false" ssstyle=" height:100%;width:1100px">
-                    <div class="card" style=" height:100%;width:1500px">
-                        <div class="card-content">
+                  <b-modal :active="ComponentModalActive === index" @close="onclick_close(index);" :width="1500" scroll="keep" xxxcan-cancel="false" style="height:100%">
+                    <div class="card" style=" height:1000px;">
+                        <div class="card-content" style=" height:1000px;">
                             <div class="level">
                               <div class="level-left">
                                   <p class="title is-4">{{menu.title}}</p>
                               </div>
                               <div class="level-right" v-bind:index="index">
                                 <b-button type="is-primary" v-on:click="onclick_delete" title="Delete">
-                                  <div style="display:flex">
                                     <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                                       <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
                                     </svg>
-                                  </div>
                                 </b-button>
                                 <b-button type="is-primary" v-on:click="onclick_close(index);"  title="Close" style="margin:auto 5px">
-
                                     <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                                       <path fill="currentColor" d="M19,3H16.3H7.7H5A2,2 0 0,0 3,5V7.7V16.4V19A2,2 0 0,0 5,21H7.7H16.4H19A2,2 0 0,0 21,19V16.3V7.7V5A2,2 0 0,0 19,3M15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4L13.4,12L17,15.6L15.6,17Z" />
                                     </svg>
-
                                 </b-button>
                               </div>            
                             </div>
 
                             <div class="panel-block">
-                              <form class="card" style="width:100%">
+                              <form class="card" style="height:100%">
                                 <b-field label="Title" horizontal>
-                                    <input class="input" type="text" v-model="menu.title" title="	Title of the menu item">
+                                    <input class="input" type="text" v-model="menu.title"  :title="manualData[3].description">
                                 </b-field>
-                                <b-field label="Matches" horizontal>
-                                  <input class="input" type="text" v-model="menu.matches" title="	(optional) An array of URL prefix match strings. The menu item is shown only if one of the string matches the URL of active page.">
+                                <b-field label="URL Filter" horizontal>
+                                  <input class="input" type="text" v-model="menu.matches"  :title="manualData[4].description">
                                 </b-field>
-                                <b-field label="Removal Element" horizontal>
-                                  <input class="input" type="text" v-model="menu.removal" title="	(optional) Semicolon-separated CSS selectors. The elements selected by the CSS selectors are excluded in HTML sent to the native client.">
+                                <b-field label="Removal Elements" horizontal>
+                                  <input class="input" type="text" v-model="menu.removal"  :title="manualData[5].description">
                                 </b-field>
                                 <b-field label="Native Script" horizontal>
                                   <!----                                  
@@ -171,12 +165,7 @@
             <p class="subtitle">Manual</p>
    
             <p class="subtitle is-6">Instructions of Setup page</p>
-                <b-table :data="manualData" :columns="manualColumns" bordered="true" xxsticky-header="true"></b-table>
-            <ul>
-              <li>
-
-              </li>
-            </ul>
+            <b-table :data="manualData" :columns="manualColumns" bordered="true" xxsticky-header="true"></b-table>
 
             <br><br>
             <p class="subtitle is-6">Debug</p>
@@ -203,7 +192,7 @@
             After modificaion of the above <code>customize/*</code> files,
             click the following button or link to refresh setup.
             <br>
-            <button class="button is-primary" v-on:click="onclick_setup" style="margin:0 3ex">Update Setup</button><br>
+            <b-button class="button is-primary" outlined v-on:click="onclick_setup" style="margin:0 3ex">Update Setup</b-button><br>
             <a href="https://www.google.com/search?q=+Chrome+Store+Native+Script+Caller" style="margin:0 3ex">Link</a>
             <br><br><br>
           </div>
@@ -272,13 +261,14 @@
                   lint: {esversion:6},
                 },
                 manualData: [
-                    { 'item': 'title', 'description': 'Title of the icon(menu)'},
+                    { 'item': 'title', 'description': 'Title of the icon menu'},
                     { 'item': 'icon', 'description': 'Relative path name of icon image file from "host" folder. It should be 16x16 PNG file.'},
                     { 'item': 'Menu Items', 'description': 'List of  menu items'},
-                    { 'item': 'menu item: title', 'description': 'Title of the menu item'},
-                    { 'item': 'menu item: matches', 'description': '(optional) Comma-separated list of URL prefix match strings.  The menu item is shown only if one of the string matches the URL of active page. Refer <a href="https://developer.chrome.com/docs/extensions/mv3/match_patterns/">pattern format.</a>'},
-                    { 'item': 'menu item: Removal', 'description': '	(optional) Semicolon-separated CSS selectors. The elements selected by the CSS selectors are excluded in HTML sent to the native client.'},
-                    { 'item': 'menu item: native Script', 'description': `(optional) Native javascript code that is executed by Node.js in local PC.
+                    { 'item': 'menu item: Title', 'description': 'Title of the menu item'},
+                    { 'item': 'menu item: URL Filter', 'description': '(optional) Comma-separated list of URL pattern strings.  The menu item is shown only if one of the string matches the URL of active page. Refer <a href="https://developer.chrome.com/docs/extensions/mv3/match_patterns/">pattern format.</a>'},
+                    { 'item': 'menu item: Removal Elements', 'description': '	(Optional) Semicolon-separated CSS selectors. The elements selected by the selectors are excluded in HTML text sent to the native client.'},
+                    { 'item': 'menu item: native Script', 'description': `
+                      (optional) Native javascript code that is executed by Node.js in the local PC.
                       This code must contain the definition of <code>function NativeScriptFunction(info)</code>, which is executed when menu is clicked.
                       <code>info</code> is a object of information of Web Page in Active tab:<br>
                       info.url: URL of the page.<br>
@@ -296,7 +286,7 @@
                       },
                       {
                           field: 'description',
-                          label: 'description',
+                          label: 'Description',
                       }
                   ]
         };

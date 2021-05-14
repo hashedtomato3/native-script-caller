@@ -123,7 +123,7 @@ async function setupAll() {
     console.debug(item)
     // create menu
     await createMenu();
-    return true;
+    return {};
 }
 
 // setup browser action icon
@@ -176,7 +176,7 @@ async function createMenu() {
         });
     });
     console.debug("menu setup finished.")
-    return true;
+    return {};
 }
 
 // on clicking menu item

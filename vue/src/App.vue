@@ -70,6 +70,7 @@
 
           <!-- Setup -->
           <div v-if="menuActiveSetup" style="height:100%">
+
             <div class="level">
               <div class="level-left">
                 <p class="subtitle">Setup of menu and user scripts</p>
@@ -104,58 +105,13 @@
               </div>
 
               <div style="margin:0px; padding:0px; height:100%;width:100%">
-                <div class="panel" animation="slide"
+                <MenuItem 
                     v-for="(menu, index) of allData.browserAction.menu"
                     :key="index"
-                    style="margin:0px; height:100%">
-                  <a class="panel-block" v-on:click="onclick_open(index);" href="#">
-                    {{menu.title}}
-                  </a>
-
-                  <b-modal :active="ComponentModalActive === index" @close="onclick_close(index);" :width="1500" scroll="keep" xxxcan-cancel="false" style="height:100%">
-                    <div class="card" style=" height:1000px;">
-                        <div class="card-content" style=" height:1000px;">
-                            <div class="level">
-                              <div class="level-left">
-                                  <p class="title is-4">{{menu.title}}</p>
-                              </div>
-                              <div class="level-right" v-bind:index="index">
-                                <b-button type="is-primary" v-on:click="onclick_delete" title="Delete">
-                                    <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                      <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
-                                    </svg>
-                                </b-button>
-                                <b-button type="is-primary" v-on:click="onclick_close(index);"  title="Close" style="margin:auto 5px">
-                                    <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                      <path fill="currentColor" d="M19,3H16.3H7.7H5A2,2 0 0,0 3,5V7.7V16.4V19A2,2 0 0,0 5,21H7.7H16.4H19A2,2 0 0,0 21,19V16.3V7.7V5A2,2 0 0,0 19,3M15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4L13.4,12L17,15.6L15.6,17Z" />
-                                    </svg>
-                                </b-button>
-                              </div>            
-                            </div>
-
-                            <div class="panel-block">
-                              <form class="card" style="height:100%">
-                                <b-field label="Title" horizontal>
-                                    <input class="input" type="text" v-model="menu.title"  :title="manualData[3].description">
-                                </b-field>
-                                <b-field label="URL Filter" horizontal>
-                                  <input class="input" type="text" v-model="menu.matches"  :title="manualData[4].description">
-                                </b-field>
-                                <b-field label="Removal Elements" horizontal>
-                                  <input class="input" type="text" v-model="menu.removal"  :title="manualData[5].description">
-                                </b-field>
-                                <b-field label="Native Script" horizontal>
-                                  <!----                                  
-                                  <textarea class="textarea" title="Native script" rows="15"></textarea>
-                                  --->
-                                  <codemirror v-model="menu.nativeScript" :options="cmOptions" />
-                                </b-field>                
-                              </form>
-                            </div>              
-                        </div>
-                    </div>
-                  </b-modal>
-                </div>
+                    :index="index"
+                    v-on:delete="allData.browserAction.menu.splice(index, 1);"
+                    v-bind:menu="allData.browserAction.menu[index]"  :manualData="manualData" :testvar.sync="testvar"
+                ></MenuItem>
               </div>
             </div>
           </div>
@@ -212,16 +168,10 @@
 </template>
 
 <script>
-  import { codemirror } from 'vue-codemirror';
-  import 'codemirror/lib/codemirror.css'
-  import 'codemirror/mode/javascript/javascript.js'
-  import 'codemirror/addon/lint/lint.css'
-  import 'codemirror/addon/selection/active-line.js'
-  import 'codemirror/addon/edit/matchbrackets.js'
-  import 'codemirror/addon/edit/closebrackets.js'
-  //import './lib/jshint-2.12.0/dist/jshint.js'
-  import 'codemirror/addon/lint/lint.js'
-  import 'codemirror/addon/lint/javascript-lint.js'
+  import MenuItem from './components/MenuItem.vue'
+  //import Test from './components/Test.vue'
+
+ 
   
   // Promisified version of chrome extension APIs
   function chromeRuntimeSendMessage(message) {
@@ -245,8 +195,8 @@
                 menuActiveSetup:false,
                 menuActiveManual:false,
                 menuActiveLink:false,
-                isOpen: -1,
-                ComponentModalActive:-1,
+                //isOpen: -1,
+                //ComponentModalActive:-1,
                 allData:null,
                 extensionName: chrome.runtime.getManifest().name,
                 manifestDownloadLink: null,
@@ -288,15 +238,16 @@
                           field: 'description',
                           label: 'Description',
                       }
-                  ]
+                  ],
+                  testvar: "testv",
         };
       },
       computed: {
       },
       methods: {
-          isComponentModalActive: function(/*index*/){
-              return this.ComponentModalActive === 0;
-          },
+          // isComponentModalActive: function(/*index*/){
+          //     return this.ComponentModalActive === 0;
+          // },
           onclick_save: async function() {
               const resp = await chromeRuntimeSendMessage({cmd:"send-native-message", msg:{cmd: "save-data", data:this.allData}});
               if( "error" in resp ) { throw resp }
@@ -308,12 +259,12 @@
               this.allData = resp;
           },
 
-          onclick_open: function(index){
-              this.ComponentModalActive = index;
-          },
-          onclick_close: function(/*index*/){
-              this.ComponentModalActive = -1;
-          },
+          // onclick_open: function(index){
+          //     this.ComponentModalActive = index;
+          // },
+          // onclick_close: function(/*index*/){
+          //     this.ComponentModalActive = -1;
+          // },
           onclick_setup: async function(){
               const resp = await chromeRuntimeSendMessage({cmd:"setup"});
               if( "error" in resp ) { throw resp }
@@ -338,11 +289,11 @@ function NativeScriptFunction(info) {
 }`
               });
           },
-          onclick_delete: function(evt) {
-              let i = evt.target.closest("div[index]").getAttribute("index");
-              this.allData.browserAction.menu.splice(i, 1);
-              this.ComponentModalActive = -1;
-          },
+          // onclick_delete: function(evt) {
+          //     let i = evt.target.closest("div[index]").getAttribute("index");
+          //     this.allData.browserAction.menu.splice(i, 1);
+          //     this.ComponentModalActive = -1;
+          // },
           alertInstallation(errmes) {
                 this.$buefy.dialog.alert({
                     title: 'Native Client might NOT be installed',
@@ -352,10 +303,12 @@ function NativeScriptFunction(info) {
           },
       },
       components: {
-        codemirror,
+        //codemirror,
+        MenuItem,
+        //Test,
       },
       created: async function(){
-
+        // get common parameters
         const common = await chromeRuntimeSendMessage({cmd:"get-common"});
         // set manifest download link
         const manifest = {
@@ -373,7 +326,7 @@ function NativeScriptFunction(info) {
         });
         this.manifestDownloadLink = URL.createObjectURL(blob);
 
-        // short cut to installation section
+        // short cut to installation page
         if( location.hash === "#installation"){
             this.menuActiveInstallation = true;
             const params = new URLSearchParams(location.search);

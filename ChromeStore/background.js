@@ -131,12 +131,12 @@ async function createMenu() {
     // load menu info from storage
     const data = await chromeStorageLocalGet(common.storageKey);
     console.debug("load menu info from local storage:")
-    console.debug(data[common.storageKey].browserAction);
+    console.debug(data[common.storageKey].settings);
     // set title of browser action
-    let title = data[common.storageKey].browserAction.title;
+    let title = data[common.storageKey].settings.title;
     chrome.action.setTitle({title:title});
     // set icon image
-    let icon = data[common.storageKey].browserAction.icon;
+    let icon = data[common.storageKey].settings.icon;
     if( icon ){
         // convert data URL to ImageData
         var byteString = atob( icon.dataURL.split( "," )[1] ) ;
@@ -163,7 +163,7 @@ async function createMenu() {
         "contexts" : ["all"],
     });
     // add child contxt menus
-    const menu = data[common.storageKey].browserAction.menu;
+    const menu = data[common.storageKey].settings.menu;
     menu.forEach(function(m, idx) {
         // add a child menu item
         chrome.contextMenus.create({
@@ -171,7 +171,7 @@ async function createMenu() {
             "title" : m.title,
             "type" : "normal",
             "contexts" : ["all"],
-            "documentUrlPatterns" : m.matches.split(","),
+            "documentUrlPatterns" : m.trigger.menu.urlFilter.split(","),
             "parentId" : parentId
         });
     });
@@ -247,7 +247,7 @@ async function actionForClickMenuItem(message) {
         function:injectionCode
     });
     // send message to injection code
-    const removal = storageData[common.storageKey].browserAction.menu[message.idx].removal;
+    const removal = storageData[common.storageKey].settings.menu[message.idx].removal;
     const injectionCodeResults = await chromeTabsSendMessage(tabId, {removal:removal});
     console.info("return value from injection code:");
     console.log(injectionCodeResults);
@@ -256,9 +256,10 @@ async function actionForClickMenuItem(message) {
         throw injectionCodeResults; // return error
     }
     // send message to native host to execute native code
-    let nativeScript = storageData[common.storageKey].browserAction.menu[message.idx].nativeScript;
+    let nativeScript = storageData[common.storageKey].settings.menu[message.idx].stage[0].nativeScript.nativeScript;
     if( ! /^\s*$/.test(nativeScript) ) { // if native script exists
-        let msg = {cmd:"click", idx:message.idx, info:injectionCodeResults};
+        console.log(nativeScript);
+        let msg = {cmd:"click", idx:message.idx, nativeScript:nativeScript, info:injectionCodeResults};
         const response = await sendMessageToNativeHost(msg);
         return response; // response to popup.js
     }

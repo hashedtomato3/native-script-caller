@@ -35,7 +35,7 @@
         // load popup icon/menu data from local storage
         const data = await chromeStorageLocalGet(commom.storageKey);      
         // draw title
-        const title = data[commom.storageKey].browserAction.title;
+        const title = data[commom.storageKey].settings.title;
         document.getElementById("title").innerText = title;
         // on click of close button
         close.addEventListener("click", function(e){
@@ -45,9 +45,9 @@
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         const url = tab.url;
         // draw menu items
-        const menu = data[commom.storageKey].browserAction.menu;
+        const menu = data[commom.storageKey].settings.menu;
         menu.forEach( function(m, idx) {
-            if( !("matches" in m) || m.matches.split(",").some((p) => {
+            if( !("urlFilter" in m.trigger.menu) || m.trigger.menu.urlFilter.split(",").some((p) => {
                 const ptn = new RegExp(p.replace(/([./?()*$+\[\]])/,"\\$1").replace(/[*]/,".*"));
                 return ptn.test(url);
             }) ) {

@@ -1,0 +1,28 @@
+{
+    "title": "My Native Script Caller",
+    "icon": {
+        "file": "icons/icon-16.png"
+    },
+    "menu": [
+        {
+            "title": "Google: Search by Yahoo",
+            "matches": "https://www.google.com/*",
+            "injectionScript": "alert(\"sample of injection code\");",
+            "nativeScript": "// function NativeScriptFunction(info)\n//   - info: information about web page in active tab\n//   - return value: object passed to the browser extension\nfunction NativeScriptFunction(info) {\n    const { JSDOM } = require(\"jsdom\");\n    const execFile = require('child_process').execFile;\n\n    const html = info.html;\n    const dom = new JSDOM(html);\n    const doc = dom.window.document;\n    const query = doc.querySelector(\"input[name='q']\").value;\n    execFile('cmd',  ['/c', 'start', '\"title\"', 'https://search.yahoo.com/search?p=' + query]);\n   \n    return {result:\"success\"};  // return to browser extension\n}\n",
+            "removal": "script"
+        },
+        {
+            "title": "Show Title in Command Prompt",
+            "matches": "http://*/*,https://*/*",
+            "injectionScript": "// Injection Code\r\n//\r\n// Object returned by IIFE will be passed to Native code\r\n// If the returned object have \"error\" key, it is handled as error.\r\n\r\n(function() { // IIFE (Immediately Invoked Function Expression) \r\n    try {\r\n        var title = document.querySelector(\"title\");\r\n        if( title ) {\r\n            return {title: title.innerHTML}\r\n        } else {\r\n            return {title: \"failed to get title\" }\r\n        }\r\n    } catch(err) {\r\n        // when error, return object should have \"error\" key\r\n        return {error:err.name, message:err.message, stack:err.stack}\r\n    }\r\n})();\r\n",
+            "nativeScript": "// function NativeScriptFunction(info)\n//   - info: information about web page in active tab\n//   - return value: object passed to the browser extension\nfunction NativeScriptFunction(info) {\n    const execFile = require('child_process').execFile;\n    const title = info.title;\n    execFile('cmd',  ['/c', 'start', 'cmd', '/c', `echo Title = ${title} & pause`]);\n    \n    //execFile('cmd',  ['/c', 'start', 'powershell', '-c', 'echo xxx; Read-Host \"Hit Return\"']);\n    //execFile('notepad.exe');\n   \n    return {result:\"success\"};  // return to browser extension\n}\n",
+            "removal": "script;div;head"
+        },
+        {
+            "title": "Open by IE",
+            "matches": "*://*/*",
+            "nativeScript": "// function NativeScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: object passed to the browser extension\nfunction NativeScriptFunction(info) {\n    const url = info.url;\n    const ie = \"C:\\\\Program Files\\\\Internet Explorer\\\\iexplore.exe\";\n  \tconst execFile = require('child_process').execFile;\n    execFile(ie,  [url]);   \n    return {result:\"success\"};  // return to browser extension\n}\n",
+            "removal": "script"
+        }
+    ]
+}

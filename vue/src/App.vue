@@ -84,10 +84,10 @@
 
             <div v-if="allData" style="min-width:640px; height:100%" >
               <b-field label="Title">
-                <input class="input" type="text" v-model="allData.browserAction.title" :title="manualData[0].description">
+                <input class="input" type="text" v-model="allData.settings.title" :title="manualData[0].description">
               </b-field>              
               <b-field label="Icon">
-                <input class="input" type="text" v-model="allData.browserAction.icon.file" :title="manualData[1].description">
+                <input class="input" type="text" v-model="allData.settings.icon.file" :title="manualData[1].description">
               </b-field>
               <div class="level" style="margin:0px">
                 <div class="level-left" style="margin:0px">
@@ -106,11 +106,11 @@
 
               <div style="margin:0px; padding:0px; height:100%;width:100%">
                 <MenuItem 
-                    v-for="(menu, index) of allData.browserAction.menu"
+                    v-for="(menu, index) of allData.settings.menu"
                     :key="index"
                     :index="index"
-                    v-on:delete="allData.browserAction.menu.splice(index, 1);"
-                    v-bind:menu="allData.browserAction.menu[index]"  :manualData="manualData" :testvar.sync="testvar"
+                    v-on:delete="allData.settings.menu.splice(index, 1);"
+                    v-bind:menu="allData.settings.menu[index]"  :manualData="manualData" :testvar.sync="testvar"
                 ></MenuItem>
               </div>
             </div>
@@ -277,21 +277,33 @@
               }
           },
           onclick_add: function() {
-              this.allData.browserAction.menu.push({
+              this.allData.settings.menu.push({
                 title:"New Title", 
-                removal:"script",
-                nativeScript:`
+                trigger:  {
+                    menu: {
+                      removal:"script",
+                    }
+                },
+                stage: [
+                  {
+                    type: "nativeScript",
+                    nativeScript: {
+                      nativeScript:`
 // function NativeScriptFunction(info)
 //   - info: information of web page in active tab
 //   - return value: object passed to the browser extension
 function NativeScriptFunction(info) {
   // user logic
-}`
+}`                      
+                    }
+                  }
+                ]
               });
+              console.log(this.allData.settings.menu)
           },
           // onclick_delete: function(evt) {
           //     let i = evt.target.closest("div[index]").getAttribute("index");
-          //     this.allData.browserAction.menu.splice(i, 1);
+          //     this.allData.settings.menu.splice(i, 1);
           //     this.ComponentModalActive = -1;
           // },
           alertInstallation(errmes) {

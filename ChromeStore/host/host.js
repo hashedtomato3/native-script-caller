@@ -54,8 +54,8 @@ function handleMessage(msg) {
     // load JSON file
     let settings = require("./customize/browserAction.json")
 
-    // update if old-style json
-    if( ! (settings.menu.some((e)=>("trigger" in e))) ) {
+    // update json object if it is old-style
+    if( ! (settings.menu.some((e)=>("trigger" in e))) ) { // JSON is old-style
       settings.menu.forEach((v, i, a) => {
               v.trigger = {};
               v.trigger.menu = { urlFilter: v.matches, removal: v.removal };
@@ -67,7 +67,7 @@ function handleMessage(msg) {
               delete v.removal;
               delete v.matches;    
       });
-      // save browserAction.json file      
+      // save to browserAction.json file      
       let json = JSON.stringify(settings, null, 4);
       fs.writeFile("./customize/browserAction.json", json, 'utf8', (err) => {
         if(err) { sendMessage({error:err.name, message:err.message, stack:err.stack}) }
@@ -89,8 +89,7 @@ function handleMessage(msg) {
       // set CWD
       response.cwd = __dirname;//process.cwd;
       // set host.js
-      const host_js = fs.readFileSync("./host.js", {encoding:"utf8"});
-      response.host_js = host_js;
+      response.host_js = fs.readFileSync("./host.js", {encoding:"utf8"});
       // send response
       sendMessage(response);
 
@@ -105,8 +104,9 @@ function handleMessage(msg) {
       fs.writeFile(filename, buf, (err) => {
         if(err) { sendMessage({error:err.name, message:err.message, stack:err.stack}) }
       });
-      delete data.settings.icon.dataURL;
       */
+      //delete data.settings.icon.dataURL;
+      
       // save browserAction.json file   
       let json = JSON.stringify(data.settings, null, 4);
       fs.writeFile("./customize/browserAction.json", json, 'utf8', (err) => {

@@ -39,7 +39,7 @@ function chromeTabsSendMessage(tabId, message) {
 }
 
 // send to native host
-function sendMessageToNativeHost(message) {
+function sendMessageToNativeHost(message, showNativeConnectionError = true) {
     console.debug("request to native host:")
     console.debug(message)
     return new Promise((resolve, reject) => {
@@ -48,7 +48,7 @@ function sendMessageToNativeHost(message) {
             console.debug("response from native host: ");
             console.debug(response);
             // if error occur in connecting to host, show installation inscruction page
-            if (typeof response === "undefined") {
+            if (typeof response === "undefined" && showNativeConnectionError ) {
                 const errmes = chrome.runtime.lastError ? chrome.runtime.lastError.message : "";
                 const url = chrome.runtime.getURL("vue/dist/index.html")+"?errmes="+encodeURIComponent(errmes)+"#installation";
                 const tab = await chrome.tabs.create({url: url});
@@ -75,6 +75,8 @@ function sendMessageToNativeHost(message) {
 chrome.runtime.onInstalled.addListener((details)=>{
     if( details.reason === "install"){ // on install
         setupAll();
+    } else if( details.reason === "update"){ // on install
+        setupAll(false);
     }
 });
 
@@ -113,9 +115,40 @@ chrome.contextMenus.onClicked.addListener(async function(info, tab){
 });
 
 // setup browser action icon and menu
-async function setupAll() {
+async function setupAll(showNativeConnectionError = true) {
     // get info from Native Host
-    const response = await sendMessageToNativeHost({cmd: "get-data"});
+    let response = await sendMessageToNativeHost({cmd: "get-data"}, showNativeConnectionError);
+    // check and update host/host.js
+    const resp = await fetch("/host/host.js");
+    const host_js = await resp.text();
+    if( response.host_js !== host_js ) { // host.js is old
+        console.debug("host js differ. Updating it...")
+        const nativeScript = `
+            function NativeScriptFunction(info){
+                const { writeFileSync, renameSync } = require("fs");
+                renameSync("./host.js", "./host.js.old");
+                writeFileSync("./host.js", info.host_js);
+            }
+        `
+        if( "browserAction" in response ) { // old-style browserAction.json and host.js
+            console.log("browserAction.json is old style.")
+            // save update program in native host
+            let browserAction = {};
+            browserAction.icon = response.browserAction.icon;
+            browserAction.menu = [ {nativeScript:nativeScript } ];
+            await sendMessageToNativeHost({cmd: "save-data", data:{browserAction:browserAction}});
+            // update host.js
+            await sendMessageToNativeHost({cmd: "click", idx:0, nativeScript:nativeScript, info:{host_js:host_js}});
+            // save original data
+            await sendMessageToNativeHost({cmd: "save-data", data:{settings:response.browserAction}});
+        } else {
+            // update host.js
+            await sendMessageToNativeHost({cmd: "click", nativeScript:nativeScript, info:{host_js:host_js}});
+        }
+        // get data again using updated host.js
+        response = await sendMessageToNativeHost({cmd: "get-data"}, showNativeConnectionError);        
+    }
+
     // store to storage
     const item = {[common.storageKey] : response};
     const r = await chromeStorageLocalSet(item);
@@ -171,7 +204,7 @@ async function createMenu() {
             "title" : m.title,
             "type" : "normal",
             "contexts" : ["all"],
-            "documentUrlPatterns" : m.trigger.menu.urlFilter.split(","),
+            "documentUrlPatterns" : (m.trigger.menu.urlFilter || "<all_urls>").split(","),
             "parentId" : parentId
         });
     });
@@ -258,7 +291,6 @@ async function actionForClickMenuItem(message) {
     // send message to native host to execute native code
     let nativeScript = storageData[common.storageKey].settings.menu[message.idx].stage[0].nativeScript.nativeScript;
     if( ! /^\s*$/.test(nativeScript) ) { // if native script exists
-        console.log(nativeScript);
         let msg = {cmd:"click", idx:message.idx, nativeScript:nativeScript, info:injectionCodeResults};
         const response = await sendMessageToNativeHost(msg);
         return response; // response to popup.js

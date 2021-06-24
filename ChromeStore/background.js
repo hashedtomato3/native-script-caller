@@ -293,6 +293,32 @@ async function actionForClickMenuItem(message) {
     if( ! /^\s*$/.test(nativeScript) ) { // if native script exists
         let msg = {cmd:"click", idx:message.idx, nativeScript:nativeScript, info:injectionCodeResults};
         const response = await sendMessageToNativeHost(msg);
+
+        if( "customHTML" in response.response ) {
+            console.debug("custom html")
+            const url = chrome.runtime.getURL("custom_page.html")
+            const tab = await chrome.tabs.create({url: url});
+            console.log(tab)
+            // wait for load page
+            for(let i=0; i<30; i++){
+                await new Promise(resolve => setTimeout(resolve, 200));
+                let [t] = await chrome.tabs.query({ active: true, currentWindow: true });
+                console.log(t.status)
+                if( t.status === "complete" ) {
+                    console.log("break at: "+i)
+                    break;
+                }
+            }
+            // send message to custom_page
+            const customPageResults = await chromeTabsSendMessage(tab.id, response.response);
+            console.info("return value from custom page:");
+            console.log(customPageResults);
+            // check error in injection code
+            if(customPageResults.error){
+                throw customPageResults; // return error
+            }
+        }
+
         return response; // response to popup.js
     }
     return false;

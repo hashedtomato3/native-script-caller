@@ -294,7 +294,7 @@ async function actionForClickMenuItem(message) {
         let msg = {cmd:"click", idx:message.idx, nativeScript:nativeScript, info:injectionCodeResults};
         const response = await sendMessageToNativeHost(msg);
 
-        if( "customHTML" in response.response ) {
+        if( "customHTML" in response.response || "customURL" in response.response ) {
             console.debug("custom html")
             const url = chrome.runtime.getURL("custom_page.html")
             const tab = await chrome.tabs.create({url: url});

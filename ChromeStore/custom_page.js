@@ -9,7 +9,7 @@
     const customBlock = document.getElementById("custom_block");
     console.log("add listner")
 
-    // listner
+    // listner for starter message from background.js
     chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
         console.log("receive message")
         console.log(message)
@@ -34,7 +34,7 @@
                     sendResponse({result:"onclick", html:html}); 
                 }
             });
-            if( btns.length > 0 ){
+            if( btns.length > 0 ){ // only if the button exists
                 return true; // for sender to wait response
             }
         }

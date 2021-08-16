@@ -32,6 +32,7 @@
                     console.log("click");
                     const html = ''+document.getElementsByTagName('html')[0].innerHTML+'';
                     sendResponse({result:"onclick", html:html}); 
+                    window.open('about:blank', '_self').close();
                 }
             });
             if( btns.length > 0 ){ // only if the button exists

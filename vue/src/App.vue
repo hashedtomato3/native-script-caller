@@ -255,6 +255,20 @@
           },
           onclick_load: async function() {
               const resp = await chromeRuntimeSendMessage({cmd:"send-native-message", msg:{cmd:"get-data"}});
+              // add stage1 if not exists
+              console.log(resp);
+              resp.settings.menu.forEach(e => {
+                if( e.stage.length < 2 ) {
+                  e.stage[1] = {
+                      type: "nativeScript",
+                      nativeScript: {
+                          nativeScript: ""
+                      }
+                  };
+
+                }
+
+              })
               if( "error" in resp ) { throw resp }
               this.allData = resp;
           },

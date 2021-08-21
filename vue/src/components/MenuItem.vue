@@ -39,8 +39,11 @@
                   <b-field label="Removal Elements" horizontal>
                     <input class="input" type="text" v-model="menu.trigger.menu.removal"  :title="manualData[5].description">
                   </b-field>
-                  <b-field label="Native Script" horizontal>
+                  <b-field label="Native Script 1" horizontal>
                     <codemirror v-model="menu.stage[0].nativeScript.nativeScript" :options="cmOptions" />
+                  </b-field>
+                  <b-field label="Native Script 2" horizontal>
+                    <codemirror v-model="menu.stage[1].nativeScript.nativeScript" :options="cmOptions" />
                   </b-field>
                 </form>
               </div> 

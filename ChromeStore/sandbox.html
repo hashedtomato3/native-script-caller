@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <!--
+    <script src="handlebars-1.0.0.beta.6.js"></script>
+    -->
+  </head>
+  <body>
+    <script>
+      // Set up event handler for postMessage from sandbox page
+      window.addEventListener('message', function(event) {
+        try {
+          //console.log(event.data)
+          // execute script
+          eval(event.data.js);
+          const outdata = SandboxScriptFunction(event.data.indata);
+          // send result back
+          event.source.postMessage({
+                name: "from sandbox",
+                outdata: outdata
+          }, event.origin);
+        } catch(e){
+          // send error info back
+          event.source.postMessage({
+                name: "from sandbox",
+                error: {name:e.name, message:e.message, stack:e.stack}
+          }, event.origin);
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 {
     "name": "Native Script Caller",
-    "version": "2.0.7",
+    "version": "2.0.8",
     "manifest_version": 3,
     "description": "Customizable menu to execute user specified programs at local PC",
     "icons": {
@@ -29,6 +29,11 @@
     "options_page": "/vue/dist/index.html",
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self'"
+    },
+    "sandbox": {
+        "pages": [
+            "/sandbox.html"
+        ]
     }
 }
 

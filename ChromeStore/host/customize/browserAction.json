@@ -42,13 +42,13 @@
                 {
                     "type": "nativeScript",
                     "nativeScript": {
-                        "nativeScript": "// function NativeScriptFunction(info)\n//   - info: information about web page in active tab\n//   - return value: object passed to the browser extension\nfunction NativeScriptFunction(info) {\n    const execFile = require('child_process').execFile;\n    const title = info.title;\n    execFile('cmd',  ['/c', 'start', 'cmd', '/c', `echo Title = ${title} & pause`]);\n    \n    //execFile('cmd',  ['/c', 'start', 'powershell', '-c', 'echo xxx; Read-Host \"Hit Return\"']);\n    //execFile('notepad.exe');\n   \n    return {result:\"success\"};  // return to browser extension\n}\n"
+                        "nativeScript": "// function NativeScriptFunction(info)\n//   - info: information about web page in active tab\n//   - return value: object passed to the browser extension\nfunction NativeScriptFunction(info) {\n    const execFile = require('child_process').execFile;\n    const title = info.title;\n    execFile('cmd',  ['/c', 'start', 'cmd', '/c', `echo Title = ${title} & pause`]);\n    \n    //execFile('cmd',  ['/c', 'start', 'powershell', '-c', 'echo xxx; Read-Host \"Hit Return\"']);\n    //execFile('notepad.exe');\n   \n    return {result:\"success\", html:info.html};  // return to browser extension\n}\n"
                     }
                 },
                 {
-                    "type": "nativeScript",
+                    "type": "browserScript",
                     "nativeScript": {
-                        "nativeScript": ""
+                        "nativeScript": "function SandboxScriptFunction(info){\n  const domparser = new DOMParser();\n  const doc = domparser.parseFromString(info.response.html, \"text/html\");\n  let t = doc.querySelector(\"title\").innerText;\n  let url = 'https://search.yahoo.com/search?p=' + t;\n  window.open(url);\n  return {customHTML:\"TITLE:  \"+t};\n}\n\n"
                     }
                 }
             ]

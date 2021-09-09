@@ -319,7 +319,7 @@ async function executeScriptAndCustom(message, nativeScript, results, scriptType
         response = await sendMessageToNativeHost(msg);
     } else {
         let msg = {js:nativeScript, indata:results};
-        response.response = await executeSandboxScript(msg);
+        response = await executeSandboxScript(msg);
     }
     // execute custom URL / Page
     if( "customHTML" in response.response || "customURL" in response.response ) {

@@ -17,7 +17,7 @@
           // send result back
           event.source.postMessage({
                 name: "from sandbox",
-                outdata: outdata
+                response: outdata
           }, event.origin);
         } catch(e){
           // send error info back

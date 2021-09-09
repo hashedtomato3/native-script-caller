@@ -289,40 +289,39 @@ async function actionForClickMenuItem(message) {
         throw injectionCodeResults; // return error
     }
 
-    // send message to native host to execute native code
+    // execute native or sandbox script
     let response = false;
-    let nativeScript = storageData[common.storageKey].settings.menu[message.idx].stage[0].nativeScript.nativeScript;
+    let script = storageData[common.storageKey].settings.menu[message.idx].stage[0].nativeScript.nativeScript;
     let scriptType = storageData[common.storageKey].settings.menu[message.idx].stage[0].type;
-    if( ! /^\s*$/.test(nativeScript) ) { // if native script exists
-        response = await executeScriptAndCustom(message, nativeScript, injectionCodeResults, scriptType);
-        console.info("return from native script & custom I")
+    if( ! /^\s*$/.test(script) ) { // if native script exists
+        response = await executeScriptAndCustom(message, script, injectionCodeResults, scriptType);
+        console.info("return from native/sandbox script & custom I")
         console.log(response)
     }
 
-    // send message to native host to execute native code
-    nativeScript = storageData[common.storageKey].settings.menu[message.idx].stage[1].nativeScript.nativeScript;
+    // execute native or sandbox script
+    script = storageData[common.storageKey].settings.menu[message.idx].stage[1].nativeScript.nativeScript;
     scriptType = storageData[common.storageKey].settings.menu[message.idx].stage[1].type;
-    if( ! /^\s*$/.test(nativeScript) ) { // if native script exists
-        response = await executeScriptAndCustom(message, nativeScript, response, scriptType);
-        console.info("return from native script & custom II")
+    if( ! /^\s*$/.test(script) ) { // if native script exists
+        response = await executeScriptAndCustom(message, script, response, scriptType);
+        console.info("return from native/sandbox script & custom II")
         console.log(response)
     }
     return response;
 }
 
-async function executeScriptAndCustom(message, nativeScript, results, scriptType = "nativeScript"){
+async function executeScriptAndCustom(message, script, results, scriptType = "nativeScript"){
     // execute Native/Sanbox script
     var response = {};
     if( scriptType == "nativeScript" ){
-        // execute Native script
-        let msg = {cmd:"click", idx:message.idx, nativeScript:nativeScript, info:results};
+        let msg = {cmd:"click", idx:message.idx, nativeScript:script, info:results};
         response = await sendMessageToNativeHost(msg);
     } else {
-        let msg = {js:nativeScript, indata:results};
+        let msg = {sandboxScript:script, info:results};
         response = await executeSandboxScript(msg);
     }
     // execute custom URL / Page
-    if( "customHTML" in response.response || "customURL" in response.response ) {
+    if( "customHTML" in response.response ) {
         console.debug("custom html")
         const url = chrome.runtime.getURL("custom_page.html")
         const tab = await chrome.tabs.create({url: url});

@@ -14,7 +14,7 @@
     
       // listner for starter message from background.js
       chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
-          var iframe = document.getElementById('theFrame');
+          const iframe = document.getElementById('theFrame');
           windowPostMessage(iframe.contentWindow, message, "*")
           .then((value)=>{
             sendResponse(value);

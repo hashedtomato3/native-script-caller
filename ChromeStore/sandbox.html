@@ -12,17 +12,17 @@
         try {
           //console.log(event.data)
           // execute script
-          eval(event.data.js);
-          const outdata = SandboxScriptFunction(event.data.indata);
+          eval(event.data.sandboxScript);
+          const outdata = SandboxScriptFunction(event.data.info);
           // send result back
           event.source.postMessage({
-                name: "from sandbox",
+                name: "success from sandbox",
                 response: outdata
           }, event.origin);
         } catch(e){
           // send error info back
           event.source.postMessage({
-                name: "from sandbox",
+                name: "error from sandbox",
                 error: {name:e.name, message:e.message, stack:e.stack}
           }, event.origin);
         }

@@ -13,13 +13,6 @@
     chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
         console.log("receive message")
         console.log(message)
-        // custom URL
-        if( "customURL" in message ){
-            location.href = message.customURL;
-            console.log("customURL")
-            sendResponse({result:"move to the url"});
-            return false;
-        }
         // custom HTML
         if( "customHTML" in message ){
             // set HTML

@@ -260,9 +260,15 @@
               resp.settings.menu.forEach(e => {
                 if( e.stage.length < 2 ) {
                   e.stage[1] = {
-                      type: "nativeScript",
+                      type: "none",
                       nativeScript: {
-                          nativeScript: ""
+                          nativeScript: `
+// function ScriptFunction(info)
+//   - info: information of web page in active tab
+//   - return value: object passed to the browser extension
+function ScriptFunction(info) {
+  // user logic
+}`                      
                       }
                   };
 
@@ -303,10 +309,10 @@
                     type: "nativeScript",
                     nativeScript: {
                       nativeScript:`
-// function NativeScriptFunction(info)
+// function ScriptFunction(info)
 //   - info: information of web page in active tab
 //   - return value: object passed to the browser extension
-function NativeScriptFunction(info) {
+function ScriptFunction(info) {
   // user logic
 }`                      
                     }

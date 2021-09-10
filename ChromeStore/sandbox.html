@@ -12,8 +12,8 @@
         try {
           //console.log(event.data)
           // execute script
-          eval(event.data.sandboxScript);
-          const outdata = SandboxScriptFunction(event.data.info);
+          eval(event.data.script);
+          const outdata = ScriptFunction(event.data.info);
           // send result back
           event.source.postMessage({
                 name: "success from sandbox",

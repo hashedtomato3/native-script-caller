@@ -315,9 +315,10 @@ async function executeScriptAndCustom(message, script, results, scriptType = "na
     var response = {};
     if( scriptType == "nativeScript" ){
         let msg = {cmd:"click", idx:message.idx, nativeScript:script, info:results};
+        //let msg = {cmd:"click", idx:message.idx, script:script, info:results};
         response = await sendMessageToNativeHost(msg);
-    } else {
-        let msg = {sandboxScript:script, info:results};
+    } else if( scriptType == "browserScript" ){
+        let msg = {script:script, info:results};
         response = await executeSandboxScript(msg);
     }
     // execute custom URL / Page

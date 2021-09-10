@@ -117,7 +117,7 @@ function handleMessage(msg) {
       
     } else if(msg.cmd === "click") { // menu item clicked
       // load native code
-      const code = msg.nativeScript;
+      const code = msg.script || msg.nativeScript;
       let r = null
       // execute native code
       if( /^\s*$/.test(code) ){
@@ -125,7 +125,11 @@ function handleMessage(msg) {
       } else {
         //r = require(filename).main(msg.injectionCodeResults);
         eval(code);
-        r = NativeScriptFunction(msg.info);
+        if( typeof ScriptFunction == 'function' ) {
+          r = ScriptFunction(msg.info);
+        } else {
+          r = NativeScriptFunction(msg.info);
+        }
       }
       sendMessage({response: r, code:code})
     } else {

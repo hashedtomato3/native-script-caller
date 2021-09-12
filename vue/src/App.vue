@@ -217,16 +217,28 @@
                     { 'item': 'menu item: Title', 'description': 'Title of the menu item'},
                     { 'item': 'menu item: URL Filter', 'description': '(optional) Comma-separated list of URL pattern strings.  The menu item is shown only if one of the string matches the URL of active page. Refer <a href="https://developer.chrome.com/docs/extensions/mv3/match_patterns/">pattern format.</a>'},
                     { 'item': 'menu item: Removal Elements', 'description': '	(Optional) Semicolon-separated CSS selectors. The elements selected by the selectors are excluded in HTML text sent to the native client.'},
-                    { 'item': 'menu item: native Script', 'description': `
-                      (optional) Native javascript code that is executed by Node.js in the local PC.
-                      This code must contain the definition of <code>function NativeScriptFunction(info)</code>, which is executed when menu is clicked.
+                    { 'item': 'menu item: Script 1', 'description': 'Native script: User script is executed by NodeJS in the local PC<br>Browser script: User script is executed in sandbox in the web browser<br>None: User script is not executed.'},
+                    { 'item': 'menu item: (script)', 'description': `
+                      User javascript code that is executed by Node.js or the web browser.
+                      This code must contain the definition of <code>function ScriptFunction(info)</code>, which is executed when menu is clicked.
                       <code>info</code> is a object of information of Web Page in Active tab:<br>
                       info.url: URL of the page.<br>
                       info.html: HTML text of the page<br>
                       info.tilte: Title of the page.<br>
                       info.frames[n].html: HTML text of frame document in the page.<br>
-                      info.frame[n].id: Id of the frame in the page.
-                      info.frame[n].name: name of the frame in the page.`},
+                      info.frame[n].id: Id of the frame in the page.<br>
+                      info.frame[n].name: name of the frame in the page.<br>
+                      return value will be passed to the next user script (Script 2).<br>
+                      If return value includes "customHTML" key, the contents (HTML text) will be shown in new Tab.<br>
+                      If the custom HTML inculdes element with class "onclick", the HTML of the custom HTML page is send to the next user script when the element is clicked.
+                   `},
+                    { 'item': 'menu item: Script 2', 'description': 'same as Script 1'},
+                    { 'item': 'menu item: (script)', 'description': `
+                      Same as Script 1 except for the arugment <code>info</code>.
+                      <code>info</code> is a object of information from the previous process:<br>
+                      info.response: return value from the Script 1.<br>
+                      info.customHTML: the HTML text of the custom HTML page from Script 1.<br>
+                   `},
                   ],
                   manualColumns: [
                       {

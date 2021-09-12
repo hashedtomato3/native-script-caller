@@ -237,7 +237,7 @@
                       Same as Script 1 except for the arugment <code>info</code>.
                       <code>info</code> is a object of information from the previous process:<br>
                       info.response: return value from the Script 1.<br>
-                      info.customHTML: the HTML text of the custom HTML page from Script 1.<br>
+                      info.customResults.html: the HTML text of the custom HTML page from Script 1.<br>
                    `},
                   ],
                   manualColumns: [

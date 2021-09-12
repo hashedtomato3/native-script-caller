@@ -53,6 +53,7 @@
                      -> the folder named "host" will be created.
                   <ul>
                     <li><a href="/host.zip" download="host.zip">host.zip</a></li>
+                    <li><a href="/host.zip" download="host.zip">host.zip2</a></li>
                   </ul>
                 </li>
                 <li>Download the following file and store it in the folder "host". <br>
@@ -368,6 +369,9 @@ function ScriptFunction(info) {
         const blob = new Blob([manifestJson], {
             type: 'text/plain',
         });
+        this.manifestDownloadLink = URL.createObjectURL(blob);
+
+
         this.manifestDownloadLink = URL.createObjectURL(blob);
 
         // short cut to installation page

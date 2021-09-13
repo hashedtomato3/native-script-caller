@@ -321,6 +321,19 @@ function ScriptFunction(info) {
 //   - return value: object passed to the browser extension
 function ScriptFunction(info) {
   // user logic
+  return {};
+}`                      
+                    }
+                  },
+                  {
+                    type: "none",
+                    nativeScript: {
+                      nativeScript:`
+// function ScriptFunction(info)
+//   - info: information of return value from Script1 and custom page
+function ScriptFunction(info) {
+  // user logic
+  return {};
 }`                      
                     }
                   }

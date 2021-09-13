@@ -52,14 +52,7 @@
                 <li>Download the following ZIP file and extract it in a local folder.<br>
                      -> the folder named "host" will be created.
                   <ul>
-                    <li><a href="/host.zip" download="host.zip">host.zip</a></li>
-                    <li><a href="/host.zip" download="host.zip">host.zip2</a></li>
-                  </ul>
-                </li>
-                <li>Download the following file and store it in the folder "host". <br>
-                    (The file name must be "manifest.json".)
-                  <ul>
-                    <li><a id="manifest_link" v-bind:href="manifestDownloadLink" download="manifest.json">manifest.json</a></li>
+                    <li><a id="host_link" v-bind:href="hostDownloadLink" download="host.zip">host.zip</a></li>
                   </ul>
                 </li>
                 <li>Install Node.js. Click <a href="https://nodejs.org/" target="_blank">here</a> to download installer.</li>
@@ -171,7 +164,7 @@
 <script>
   import MenuItem from './components/MenuItem.vue'
   //import Test from './components/Test.vue'
-
+  import JSZip from 'jszip';
  
   
   // Promisified version of chrome extension APIs
@@ -201,6 +194,7 @@
                 allData:null,
                 extensionName: chrome.runtime.getManifest().name,
                 manifestDownloadLink: null,
+                zipDownloadLink: null,
                 storeLink : "https://chrome.google.com/webstore/detail/"+chrome.runtime.id,
                 cmOptions: {
                   mode: "javascript",
@@ -355,7 +349,7 @@ function ScriptFunction(info) {
       created: async function(){
         // get common parameters
         const common = await chromeRuntimeSendMessage({cmd:"get-common"});
-        // set manifest download link
+        // set host.zip link
         const manifest = {
             "name": common.appName,
             "description": "Customizable menu to run user scripts at browser and/or local PC.",
@@ -366,13 +360,20 @@ function ScriptFunction(info) {
             ]
         };
         const manifestJson = JSON.stringify(manifest, null, '\t');
+        /*
         const blob = new Blob([manifestJson], {
             type: 'text/plain',
         });
         this.manifestDownloadLink = URL.createObjectURL(blob);
-
-
-        this.manifestDownloadLink = URL.createObjectURL(blob);
+        */
+        const resp = await fetch("/host.zip");
+        const host_blob = await resp.blob();
+        const zip = new JSZip();
+        const top_zip = await zip.loadAsync(host_blob);
+        const host_zip = await top_zip.folder("host");
+        host_zip.file("manifest.json", manifestJson);
+        const blob2 = await top_zip.generateAsync({type:"blob"});
+        this.hostDownloadLink = URL.createObjectURL(blob2);
 
         // short cut to installation page
         if( location.hash === "#installation"){

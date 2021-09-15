@@ -28,8 +28,10 @@
           <div v-if="menuActiveAbout">
             <p class="subtitle">About</p>
             <p>
-              This extension provides a custom menu in Chrome toolbar and context menu.<br>
-              By clicking it, you can run your Node.js script on the local PC.
+              This extension provides a customizable menu to run user Javascript code.<br>
+              User script can be a Node.js script or a browser javascript.<br>
+              User script can include a HTML text for a custom page which would be used to display message or user input form.<br>
+              This extension is a kind of framework for browser application.<br>
             </p>
 
           </div>
@@ -225,7 +227,7 @@
                       info.frame[n].name: name of the frame in the page.<br>
                       return value will be passed to the next user script (Script 2).<br>
                       If return value includes "customHTML" key, the contents (HTML text) will be shown in new Tab.<br>
-                      If the custom HTML inculdes element with class "onclick", the HTML of the custom HTML page is send to the next user script when the element is clicked.
+                      If the custom HTML inculdes element with class "response-onclick", the HTML of the custom HTML page is send to the next user script when the element is clicked.
                    `},
                     { 'item': 'menu item: Script 2', 'description': 'same as Script 1'},
                     { 'item': 'menu item: (script)', 'description': `

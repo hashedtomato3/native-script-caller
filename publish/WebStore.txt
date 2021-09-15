@@ -11,9 +11,11 @@ Details:
 - By clicking the menu item, two user Javascript code is executed sequentially
 - User script can be a Node.js script which will be executed in the local PC
 - User script can be javascript which will be executed in sandbox in the web browser
-- User script receives information of the page in active tab and return value from the previous user script
 - User script can include a HTML text for a custom page which would be used to display message or user input form
+- User script receives information of the page in active tab, return value from the previous user script,
+  and HTML text of a custom page at the moment that user click the button on the page.
 - Filter menu items by prefix of URL of active page
+- For Windows PC only
 
 Installation:
 This extension requires Native Client installed in the local Windows PC.

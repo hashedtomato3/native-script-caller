@@ -19,13 +19,22 @@
             customBlock.innerHTML = message.customHTML;
             console.log("customHTML")
             // set response button
-            const btns = document.querySelectorAll(".response-onclick");
+            const btns = document.querySelectorAll(".form-button");
             btns.forEach((e)=>{
-                    e.onclick = function() { 
-                    console.log("click");
-                    const html = ''+document.getElementsByTagName('html')[0].innerHTML+'';
-                    sendResponse({result:"onclick", html:html}); 
-                    window.open('about:blank', '_self').close();
+                //     e.onclick = function() { 
+                //     console.log("click");
+                //     const html = ''+document.getElementsByTagName('html')[0].innerHTML+'';
+                //     sendResponse({result:"onclick", html:html}); 
+                //     window.open('about:blank', '_self').close();
+                // }
+                e.onclick = function(evt) {
+                        console.log("click");
+    console.log(evt.target)
+    console.log(evt.target.form)
+                        const fd = new FormData(evt.target.form);
+                        const fdarr = Array.from(fd.entries());
+                        sendResponse({result:"onclick", FormData:fdarr});
+                        window.open('about:blank', '_self').close();
                 }
             });
             if( btns.length > 0 ){ // only if the button exists

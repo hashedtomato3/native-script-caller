@@ -227,7 +227,7 @@
                       info.frame[n].name: name of the frame in the page.<br>
                       return value will be passed to the next user script (Script 2).<br>
                       If return value includes "customHTML" key, the contents (HTML text) will be shown in new Tab.<br>
-                      If the custom HTML inculdes element with class "response-onclick", the HTML of the custom HTML page is send to the next user script when the element is clicked.
+                      If the custom HTML inculdes buttons with class "send-form-button", the form data ([[name1, value1], [name2, value2], ...]) get by FormData() is send to Script 2 when the button is clicked.
                    `},
                     { 'item': 'menu item: Script 2', 'description': 'same as Script 1'},
                     { 'item': 'menu item: (script)', 'description': `

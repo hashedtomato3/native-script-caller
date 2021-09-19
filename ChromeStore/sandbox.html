@@ -10,12 +10,8 @@
       // Set up event handler for postMessage from sandbox page
       window.addEventListener('message', function(event) {
         try {
-          //console.log(event.data)
           // execute script
           eval(event.data.script);
-          //console.log(event.data)
-          //const i = event.data.info
-          //console.log(i)
           const outdata = ScriptFunction(event.data.info);
           // send result back
           event.source.postMessage({

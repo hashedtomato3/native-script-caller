@@ -21,17 +21,10 @@
             // set response button
             const btns = document.querySelectorAll(".send-form-button");
             btns.forEach((e)=>{
-                //     e.onclick = function() { 
-                //     console.log("click");
-                //     const html = ''+document.getElementsByTagName('html')[0].innerHTML+'';
-                //     sendResponse({result:"onclick", html:html}); 
-                //     window.open('about:blank', '_self').close();
-                // }
                 e.onclick = function(evt) {
                         console.log("click");
                         if( evt.target.form ){
                             const fd = new FormData(evt.target.form);
-                            //for(var pair of fd.entries()) { console.log(pair[0]+ ', '+ pair[1]); }
                             const fdarr = Array.from(fd.entries());
                             sendResponse({result:"onclick", formData:fdarr});
                         } else {

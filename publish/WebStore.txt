@@ -3,8 +3,9 @@ Customizable MENU to run user scripts.
 
 This extension provides a customizable menu to run user Javascript code.
 User script can be a Node.js script or a browser javascript.
+(Arbitary program of local PC can be called from Node.js scirpt)
 User script can include a HTML text for a custom page which would be used to display message or user input form.
-This extension is a kind of framework for browser application.
+So, this extension is a kind of framework for browser application.
 
 Details:
 - Provides Customizable icon and menu in Chrome toolbar and context menu
@@ -12,7 +13,7 @@ Details:
 - User script can be a Node.js script which will be executed in the local PC
 - User script can be javascript which will be executed in sandbox in the web browser
 - User script can include a HTML text for a custom page which would be used to display message or user input form
-- User script receives information of the page in active tab, return value from the previous user script,
+- User script receives information of the page in active tab (URL, title, HTML, etc.), and return value from the previous user script,
   and HTML text of a custom page at the moment that user click the button on the page.
 - Filter menu items by prefix of URL of active page
 - For Windows PC only

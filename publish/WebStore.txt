@@ -20,4 +20,4 @@ Details:
 
 Installation:
 This extension requires Native Client installed in the local Windows PC.
-The installation instruction is displayed at the installation of this extension.
+The installation instruction is displayed at the installation of this extens ion.

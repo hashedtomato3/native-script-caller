@@ -19,7 +19,7 @@
             customBlock.innerHTML = message.customHTML;
             console.log("customHTML")
             // set response button
-            const btns = document.querySelectorAll(".form-button");
+            const btns = document.querySelectorAll(".send-form-button");
             btns.forEach((e)=>{
                 //     e.onclick = function() { 
                 //     console.log("click");
@@ -29,11 +29,14 @@
                 // }
                 e.onclick = function(evt) {
                         console.log("click");
-    console.log(evt.target)
-    console.log(evt.target.form)
-                        const fd = new FormData(evt.target.form);
-                        const fdarr = Array.from(fd.entries());
-                        sendResponse({result:"onclick", FormData:fdarr});
+                        if( evt.target.form ){
+                            const fd = new FormData(evt.target.form);
+                            //for(var pair of fd.entries()) { console.log(pair[0]+ ', '+ pair[1]); }
+                            const fdarr = Array.from(fd.entries());
+                            sendResponse({result:"onclick", formData:fdarr});
+                        } else {
+                            sendResponse({result:"onclick", formData:[]});
+                        }
                         window.open('about:blank', '_self').close();
                 }
             });

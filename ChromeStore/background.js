@@ -312,7 +312,7 @@ async function actionForClickMenuItem(message) {
 
 async function executeScriptAndCustom(message, script, results, scriptType = "nativeScript"){
     // execute Native/Sanbox script
-    var response = {};
+    let response = {};
     if( scriptType == "nativeScript" ){
         let msg = {cmd:"click", idx:message.idx, nativeScript:script, info:results};
         //let msg = {cmd:"click", idx:message.idx, script:script, info:results};
@@ -321,7 +321,7 @@ async function executeScriptAndCustom(message, script, results, scriptType = "na
         let msg = {script:script, info:results};
         response = await executeSandboxScript(msg);
     }
-    // execute custom URL / Page
+    // execute custom Page
     if( "customHTML" in response.response ) {
         console.debug("custom html")
         const url = chrome.runtime.getURL("custom_page.html")

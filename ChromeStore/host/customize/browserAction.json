@@ -87,13 +87,13 @@
                 {
                     "type": "browserScript",
                     "nativeScript": {
-                        "nativeScript": "\n// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: object passed to the browser extension\nfunction ScriptFunction(info) {\n  // user logic\n  const title = info.title;\n  return {\n    customHTML:`<div>Title is ${title}<br>your name: <input type='text' id='name'><input type='button' class='response-onclick' value='OK'></div>`\n  };\n}\n"
+                        "nativeScript": "\n// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: object passed to the browser extension\nfunction ScriptFunction(info) {\n  // user logic\n  const title = info.title;\n  return {\n    customHTML:`<div>Title is ${title}<br><form>your name: <input type='text' name='name'><input type='button' class='send-form-button' value='OK'></form></div>`\n  };\n}\n"
                     }
                 },
                 {
                     "type": "browserScript",
                     "nativeScript": {
-                        "nativeScript": "function ScriptFunction(info) {\n  // user logic\n  const domparser = new DOMParser();\n  const doc = domparser.parseFromString(info.customResults.html, \"text/html\");\n  const name = doc.querySelector(\"#name\").value;\n  return {\n    t: doc.querySelector(\"title\").innerHTML,\n    q: doc.querySelector(\"input\").value,\n    customHTML:`<div>your name is ${name}<br><input type='button' class='response-onclick' value='OK'></div>`\n  };\n}\n"
+                        "nativeScript": "function ScriptFunction(info) {\n  // user logic\n  //const domparser = new DOMParser();\n  //const doc = domparser.parseFromString(info.customResults.html, \"text/html\");\n  //const name = doc.querySelector(\"#name\").value;\n  const name = info.customResults.formData.find(e => e[0] === \"name\")[1];\n  return {\n    fd: info.customResults.formData,\n    name: name,\n    customHTML:`<div>your name is ${name}<br><form><input type='button' class='send-form-button' value='OK'></form></div>`\n  };\n}\n"
                     }
                 }
             ]

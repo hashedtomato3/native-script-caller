@@ -26,7 +26,7 @@
                         if( evt.target.form ){
                             const fd = new FormData(evt.target.form);
                             const fdarr = Array.from(fd.entries());
-                            sendResponse({result:"onclick", formData:fdarr});
+                            sendResponse({result:"onclick", formData:fdarr, formAction:evt.target.form.action});
                         } else {
                             sendResponse({result:"onclick", formData:[]});
                         }

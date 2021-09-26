@@ -299,14 +299,21 @@ async function actionForClickMenuItem(message) {
         console.log(response)
     }
 
-    // execute native or sandbox script
-    script = storageData[common.storageKey].settings.menu[message.idx].stage[1].nativeScript.nativeScript;
-    scriptType = storageData[common.storageKey].settings.menu[message.idx].stage[1].type;
-    if( ! /^\s*$/.test(script) ) { // if native script exists
-        response = await executeScriptAndCustom(message, script, response, scriptType);
-        console.info("return from native/sandbox script & custom II")
-        console.log(response)
+    // execute action native or sandbox script
+    let next_action = response.action;
+    while(next_action) {
+        const stage = storageData[common.storageKey].settings.menu[message.idx].stage.find(e => e.actionName === next_action);
+        console.log("next stage")
+        console.log(stage)
+        let script = stage.nativeScript.nativeScript;
+        scriptType = stage.type;
+        if( ! /^\s*$/.test(script) ) { // if native script exists
+            response = await executeScriptAndCustom(message, script, response, scriptType);
+            console.info("return from action native/sandbox script & custom")
+            console.log(response)
+        }    
     }
+
     return response;
 }
 
@@ -321,6 +328,11 @@ async function executeScriptAndCustom(message, script, results, scriptType = "na
         let msg = {script:script, info:results};
         response = await executeSandboxScript(msg);
     }
+    // set action
+    if( "defaultAction" in response.response ) {
+        response.action = response.response.defaultAction;
+    }
+
     // execute custom Page
     if( "customHTML" in response.response ) {
         console.debug("custom html")
@@ -346,8 +358,11 @@ async function executeScriptAndCustom(message, script, results, scriptType = "na
             throw customPageResults; // return error
         }
         response.customResults = customPageResults; // add costom results
+        if( formAction in response.customResults ) {
+            response.action = response.customResults.formAction; // set action
+        }
     }
-    return response; // response to popup.js
+    return response; // = {response:xxx, action:xxx, customResults:xxx}
 }
 
 async function executeSandboxScript(msg){

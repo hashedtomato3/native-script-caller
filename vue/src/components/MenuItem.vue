@@ -49,7 +49,7 @@
                   <b-field horizontal>
                     <codemirror v-model="menu.stage[0].nativeScript.nativeScript" :options="cmOptions" />
                   </b-field>
-                  <div v-for="stage in menu.stage.slice(1)">
+                  <div v-for="stage in menu.stage.slice(1)" :key="stage.actionName">
                         <b-field label="Action Name" horizontal>
                           <input type="text" v-model="stage.actionName">
                         </b-field>

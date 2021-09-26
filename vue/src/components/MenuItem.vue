@@ -39,7 +39,7 @@
                   <b-field label="Removal Elements" horizontal>
                     <input class="input" type="text" v-model="menu.trigger.menu.removal"  :title="manualData[5].description">
                   </b-field>
-                  <b-field label="Script 1" horizontal>
+                  <b-field label="User Script" horizontal>
                     <label><input type="radio" v-model="menu.stage[0].type" value="nativeScript">Native Script (Node.js)</label>
                     <span style="width:5px"></span>
                     <label><input type="radio" v-model="menu.stage[0].type" value="browserScript">Browser Script (sandbox)</label>
@@ -49,16 +49,21 @@
                   <b-field horizontal>
                     <codemirror v-model="menu.stage[0].nativeScript.nativeScript" :options="cmOptions" />
                   </b-field>
-                  <b-field label="Script 2" horizontal>
-                    <label><input type="radio" v-model="menu.stage[1].type" value="nativeScript">Native Script (Node.js)</label>
-                    <span style="width:5px"></span>
-                    <label><input type="radio" v-model="menu.stage[1].type" value="browserScript">Browser Script (sandbox)</label>
-                    <span style="width:5px"></span>
-                    <label><input type="radio" v-model="menu.stage[1].type" value="none">None</label>
-                  </b-field>
-                  <b-field>
-                    <codemirror v-model="menu.stage[1].nativeScript.nativeScript" :options="cmOptions" />
-                  </b-field>
+                  <div v-for="stage in menu.stage.slice(1)">
+                        <b-field label="Action Name" horizontal>
+                          <input type="text" v-model="stage.actionName">
+                        </b-field>
+                        <b-field label="Action Function" horizontal>
+                          <label><input type="radio" v-model="stage.type" value="nativeScript">Native Script (Node.js)</label>
+                          <span style="width:5px"></span>
+                          <label><input type="radio" v-model="stage.type" value="browserScript">Browser Script (sandbox)</label>
+                          <span style="width:5px"></span>
+                          <label><input type="radio" v-model="stage.type" value="none">None</label>
+                        </b-field>
+                        <b-field>
+                          <codemirror v-model="stage.nativeScript.nativeScript" :options="cmOptions" />
+                        </b-field>
+                  </div>
                 </form>
               </div> 
           </div>

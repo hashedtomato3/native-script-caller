@@ -1,10 +1,11 @@
 
-Customizable MENU to run user scripts.
+Customizable MENU to run user scripts
 
 This extension provides a customizable menu to run user Javascript code.
 User script can be a Node.js script or a browser javascript.
 (Arbitary program of local PC can be called from Node.js scirpt)
 User script can include a HTML text for a custom page which would be used to display message or user input form.
+
 So, this extension is a kind of framework for browser application.
 
 Details:

@@ -1,21 +1,22 @@
 
-Customizable MENU to run user scripts
+Customizable MENU to run user native/browser javascript
 
-This extension provides a customizable menu to run user Javascript code.
-User script can be a Node.js script or a browser javascript.
-(Arbitary program of local PC can be called from Node.js scirpt)
-User script can include a HTML text for a custom page which would be used to display message or user input form.
+This extension provides a customizable menu to run user scripts (native or browser Javascript) and arbitary loccal PC programs.
+User script can include custom page HTML to display messages or input forms.
+Action functions for the input forms can be written in natieve or browser Javascript.
 
-So, this extension is a kind of framework for browser application.
+So, this extension is a kind of framework for browser native application.
 
 Details:
 - Provides Customizable icon and menu in Chrome toolbar and context menu
-- By clicking the menu item, two user Javascript code is executed sequentially
+- By clicking the menu item, user Javascript code is executed
 - User script can be a Node.js script which will be executed in the local PC
+  (Arbitary program of local PC can be called from Node.js scirpt)
 - User script can be javascript which will be executed in sandbox in the web browser
+- User script receives information of the page in active tab (URL, title, HTML, etc.)
 - User script can include a HTML text for a custom page which would be used to display message or user input form
-- User script receives information of the page in active tab (URL, title, HTML, etc.), and return value from the previous user script,
-  and HTML text of a custom page at the moment that user click the button on the page.
+- Action function receives the form data from custom page and return value from the previous user script/action function.
+- Action function also includes custom page HTNL and can be called directly after the user script or another action function.
 - Filter menu items by prefix of URL of active page
 - For Windows PC only
 

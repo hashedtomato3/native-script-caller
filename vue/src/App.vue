@@ -267,8 +267,10 @@
               // add stage1 if not exists
               console.log(resp);
               resp.settings.menu.forEach(e => {
-                if( e.stage.length < 2 ) {
-                  e.stage[1] = {
+                if( e.stage.length < 2 ) { // if old style
+                  e.stage[0].actionName = "";
+                  const stage = {
+                      actionName: "",
                       type: "none",
                       nativeScript: {
                           nativeScript: `
@@ -280,7 +282,11 @@ function ScriptFunction(info) {
 }`                      
                       }
                   };
-
+                  e.stage[1] = JSON.parse(JSON.stringify(stage));
+                  e.stage[2] = JSON.parse(JSON.stringify(stage));
+                  e.stage[3] = JSON.parse(JSON.stringify(stage));
+                  e.stage[4] = JSON.parse(JSON.stringify(stage));
+                  e.stage[5] = JSON.parse(JSON.stringify(stage));
                 }
 
               })

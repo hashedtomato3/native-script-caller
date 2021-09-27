@@ -105,12 +105,13 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 });
 
 // on clicking context menu
-chrome.contextMenus.onClicked.addListener(async function(info, tab){
+chrome.contextMenus.onClicked.addListener(function(info, tab){
     //console.debug(info)
     if( /^menuItem_[0-9]+$/.test(info.menuItemId) ) {
         const id = parseInt(info.menuItemId.slice(9), 10);
         //console.debug("sending message for " + id)
-        await actionForClickMenuItem({cmd:"click", idx:id});   
+        actionForClickMenuItem({cmd:"click", idx:id})
+        .catch(err => console.log(err));
     }
 });
 
@@ -290,94 +291,94 @@ async function actionForClickMenuItem(message) {
     }
 
     // execute native or sandbox script
-    let response = false;
+    let results = false;
     let script = storageData[common.storageKey].settings.menu[message.idx].stage[0].nativeScript.nativeScript;
     let scriptType = storageData[common.storageKey].settings.menu[message.idx].stage[0].type;
-    if( ! /^\s*$/.test(script) ) { // if native script exists
-        response = await executeScriptAndCustom(message, script, injectionCodeResults, scriptType);
-        console.info("return from native/sandbox script & custom I")
-        console.log(response)
-    }
+    console.info("send to script & custom")
+    console.log({script, info:injectionCodeResults, scriptType});
+    results = await executeScriptAndCustom(script, injectionCodeResults, scriptType);
+    console.info("return from script & custom")
+    console.log(results)
 
     // execute action native or sandbox script
-    let next_action = response.action;
+    let next_action = results.action;
     while(next_action) {
-        const stage = storageData[common.storageKey].settings.menu[message.idx].stage.find(e => e.actionName === next_action);
+        const stage = storageData[common.storageKey].settings.menu[message.idx].stage.slice(1).find(e => e.actionName === next_action);
         console.log("next stage")
         console.log(stage)
         let script = stage.nativeScript.nativeScript;
         scriptType = stage.type;
-        if( ! /^\s*$/.test(script) ) { // if native script exists
-            response = await executeScriptAndCustom(message, script, response, scriptType);
-            console.info("return from action native/sandbox script & custom")
-            console.log(response)
-        }    
+        results = JSON.parse(JSON.stringify(results)); // deep copy
+        console.info("send to action function & custom")
+        console.log({script, info:results, scriptType});
+        results = await executeScriptAndCustom(script, results, scriptType);
+        console.info("return from action function & custom")
+        console.log(results)
     }
 
-    return response;
+    return results;
 }
 
-async function executeScriptAndCustom(message, script, results, scriptType = "nativeScript"){
+async function executeScriptAndCustom(script, info, scriptType = "nativeScript"){
     // execute Native/Sanbox script
-    let response = {};
+    let results = {};
     if( scriptType == "nativeScript" ){
-        let msg = {cmd:"click", idx:message.idx, nativeScript:script, info:results};
+        let msg = {cmd:"click", nativeScript:script, info:info};
         //let msg = {cmd:"click", idx:message.idx, script:script, info:results};
-        response = await sendMessageToNativeHost(msg);
+        results = await sendMessageToNativeHost(msg);
     } else if( scriptType == "browserScript" ){
-        let msg = {script:script, info:results};
-        response = await executeSandboxScript(msg);
-    }
-    // set action
-    if( "defaultAction" in response.response ) {
-        response.action = response.response.defaultAction;
+        let msg = {script:script, info:info};
+        results = await executeSandboxScript(msg);
     }
 
     // execute custom Page
-    if( "customHTML" in response.response ) {
+    if( "customHTML" in results.response ) {
         console.debug("custom html")
         const url = chrome.runtime.getURL("custom_page.html")
         const tab = await chrome.tabs.create({url: url});
-        console.log(tab)
+        //console.log(tab)
         // wait for load page
         for(let i=0; i<30; i++){
             await new Promise(resolve => setTimeout(resolve, 200));
             let [t] = await chrome.tabs.query({ active: true, currentWindow: true });
-            console.log(t.status)
+            //console.log(t.status)
             if( t.status === "complete" ) {
-                console.log("break at: "+i)
+                console.log("break waiting at: "+i)
                 break;
             }
         }
         // send message to custom_page
-        const customPageResults = await chromeTabsSendMessage(tab.id, response.response);
+        const customPageResults = await chromeTabsSendMessage(tab.id, results.response);
         console.info("return value from custom page:");
         console.log(customPageResults);
         // check error in injection code
         if(customPageResults.error){
             throw customPageResults; // return error
         }
-        response.customResults = customPageResults; // add costom results
-        if( formAction in response.customResults ) {
-            response.action = response.customResults.formAction; // set action
+        results.customResults = customPageResults; // add costom results
+        if( "formAction" in results.customResults ) {
+            results.action = results.customResults.formAction; // set action
         }
+    } else if( "action" in results.response ) {
+        results.action = results.response.action;
     }
-    return response; // = {response:xxx, action:xxx, customResults:xxx}
+
+    return results; // = {response:xxx, action:xxx, customResults:xxx}
 }
 
 async function executeSandboxScript(msg){
-        console.info("creating tab for sandbox page")
+        //console.info("creating tab for sandbox page")
         // create tab of sandbox page
         const url = chrome.runtime.getURL("sandbox_page.html")
         const tab = await chrome.tabs.create({url: url});
-        console.log(tab)
+        //console.log(tab)
         // wait for load page
         for(let i=0; i<30; i++){
             await new Promise(resolve => setTimeout(resolve, 200));
             let [t] = await chrome.tabs.query({ active: true, currentWindow: true });
-            console.log(t.status)
+            //console.log(t.status)
             if( t.status === "complete" ) {
-                console.log("break at: "+i)
+                console.log("break waiting at: "+i)
                 break;
             }
         }

@@ -19,14 +19,15 @@
             customBlock.innerHTML = message.customHTML;
             console.log("customHTML")
             // set response button
-            const btns = document.querySelectorAll(".send-form-button");
+            const btns = document.querySelectorAll("[data-action]");
+            console.log(btns)
             btns.forEach((e)=>{
                 e.onclick = function(evt) {
                         console.log("click");
                         if( evt.target.form ){
                             const fd = new FormData(evt.target.form);
                             const fdarr = Array.from(fd.entries());
-                            sendResponse({result:"onclick", formData:fdarr, formAction:evt.target.form.action});
+                            sendResponse({result:"onclick", formData:fdarr, formAction:evt.target.dataset['action']});
                         } else {
                             sendResponse({result:"onclick", formData:[]});
                         }

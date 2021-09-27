@@ -42,14 +42,15 @@
                 {
                     "type": "nativeScript",
                     "nativeScript": {
-                        "nativeScript": "// function NativeScriptFunction(info)\n//   - info: information about web page in active tab\n//   - return value: object passed to the browser extension\nfunction ScriptFunction(info) {\n    const execFile = require('child_process').execFile;\n    const title = info.title;\n    execFile('cmd',  ['/c', 'start', 'cmd', '/c', `echo Title = ${title} & pause`]);\n    \n    //execFile('cmd',  ['/c', 'start', 'powershell', '-c', 'echo xxx; Read-Host \"Hit Return\"']);\n    //execFile('notepad.exe');\n   \n    return {result:\"success\", html:info.html};  // return to browser extension\n}\n"
+                        "nativeScript": "// function NativeScriptFunction(info)\n//   - info: information about web page in active tab\n//   - return value: object passed to the browser extension\nfunction ScriptFunction(info) {\n    const execFile = require('child_process').execFile;\n    const title = info.title;\n    execFile('cmd',  ['/c', 'start', 'cmd', '/c', `echo Title = ${title} & pause`]);\n    \n    //execFile('cmd',  ['/c', 'start', 'powershell', '-c', 'echo xxx; Read-Host \"Hit Return\"']);\n    //execFile('notepad.exe');\n   \n    return {action:\"default\", html:info.html};  // return to browser extension\n}\n"
                     }
                 },
                 {
                     "type": "browserScript",
                     "nativeScript": {
                         "nativeScript": "function ScriptFunction(info){\n  const domparser = new DOMParser();\n  const doc = domparser.parseFromString(info.response.html, \"text/html\");\n  let t = doc.querySelector(\"title\").innerText;\n  let url = 'https://search.yahoo.com/search?p=' + t;\n  window.open(url);\n  return {customHTML:\"TITLE:  \"+t};\n}\n\n"
-                    }
+                    },
+                    "actionName": "default"
                 }
             ]
         },
@@ -87,14 +88,15 @@
                 {
                     "type": "browserScript",
                     "nativeScript": {
-                        "nativeScript": "\n// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: object passed to the browser extension\nfunction ScriptFunction(info) {\n  // user logic\n  const title = info.title;\n  return {\n    customHTML:`<div>Title is ${title}<br><form>your name: <input type='text' name='name'><input type='button' class='send-form-button' value='OK'></form></div>`\n  };\n}\n"
+                        "nativeScript": "\n// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: object passed to the browser extension\nfunction ScriptFunction(info) {\n  // user logic\n  const title = info.title;\n  return {\n    customHTML:`<div>Title is ${title}<br><form>your name: <input type='text' name='name'><input type='button' data-action='default' value='OK'></form></div>`\n  };\n}\n"
                     }
                 },
                 {
                     "type": "browserScript",
                     "nativeScript": {
-                        "nativeScript": "function ScriptFunction(info) {\n  // user logic\n  //const domparser = new DOMParser();\n  //const doc = domparser.parseFromString(info.customResults.html, \"text/html\");\n  //const name = doc.querySelector(\"#name\").value;\n  const name = info.customResults.formData.find(e => e[0] === \"name\")[1];\n  return {\n    fd: info.customResults.formData,\n    name: name,\n    customHTML:`<div>your name is ${name}<br><form><input type='button' class='send-form-button' value='OK'></form></div>`\n  };\n}\n"
-                    }
+                        "nativeScript": "function ScriptFunction(info) {\n  // user logic\n  //const domparser = new DOMParser();\n  //const doc = domparser.parseFromString(info.customResults.html, \"text/html\");\n  //const name = doc.querySelector(\"#name\").value;\n  const name = info.customResults.formData.find(e => e[0] === \"name\")[1];\n  return {\n    fd: info.customResults.formData,\n    name: name,\n    customHTML:`<div>your name is ${name}<br><form><input type='button' data-action='none' value='OK'></form></div>`\n  };\n}\n"
+                    },
+                    "actionName": "default"
                 }
             ]
         }

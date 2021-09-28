@@ -51,7 +51,7 @@
                   </b-field>
                   <div v-for="stage in menu.stage.slice(1)" :key="stage.actionName">
                         <b-field label="Action Name" horizontal>
-                          <input type="text" v-model="stage.actionName">
+                          <input class="input" type="text" v-model="stage.actionName">
                         </b-field>
                         <b-field label="Action Function" horizontal>
                           <label><input type="radio" v-model="stage.type" value="nativeScript">Native Script (Node.js)</label>

@@ -111,7 +111,7 @@ chrome.contextMenus.onClicked.addListener(function(info, tab){
         const id = parseInt(info.menuItemId.slice(9), 10);
         //console.debug("sending message for " + id)
         actionForClickMenuItem({cmd:"click", idx:id})
-        .catch(err => console.log(err));
+        .catch(err => console.error(err));
     }
 });
 
@@ -314,6 +314,7 @@ async function actionForClickMenuItem(message) {
         results = await executeScriptAndCustom(script, results, scriptType);
         console.info("return from action function & custom")
         console.log(results)
+        next_action = results.action;
     }
 
     return results;

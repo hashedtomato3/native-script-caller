@@ -1,11 +1,10 @@
 
-Customizable MENU to run user native/browser javascript
+Customizable MENU to run user native/browser javascript and custom pages
 
 This extension provides a customizable menu to run user scripts (native or browser Javascript) and arbitary loccal PC programs.
 User script can include custom page HTML to display messages or input forms.
 Action functions for the input forms can be written in natieve or browser Javascript.
-
-So, this extension is a kind of framework for browser native application.
+So It can be said that this extension is a micro framework for browser native application.
 
 Details:
 - Provides Customizable icon and menu in Chrome toolbar and context menu

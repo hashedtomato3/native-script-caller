@@ -28,10 +28,11 @@
           <div v-if="menuActiveAbout">
             <p class="subtitle">About</p>
             <p>
-              This extension provides a customizable menu to run user Javascript code.<br>
-              User script can be a Node.js script or a browser javascript.<br>
-              User script can include a HTML text for a custom page which would be used to display message or user input form.<br>
-              This extension is a kind of framework for browser application.<br>
+              Customizable MENU to run user native/browser javascript and custom pages<br><br>
+
+              This extension provides a customizable menu to run user scripts (native or browser Javascript) and arbitary loccal PC programs.<br>
+              User script can include custom page HTML to display messages or input forms.<br>
+              Action functions for the input forms can be written in natieve or browser Javascript.<br><br>
             </p>
 
           </div>
@@ -214,7 +215,7 @@
                     { 'item': 'menu item: Title', 'description': 'Title of the menu item'},
                     { 'item': 'menu item: URL Filter', 'description': '(optional) Comma-separated list of URL pattern strings.  The menu item is shown only if one of the string matches the URL of active page. Refer <a href="https://developer.chrome.com/docs/extensions/mv3/match_patterns/">pattern format.</a>'},
                     { 'item': 'menu item: Removal Elements', 'description': '	(Optional) Semicolon-separated CSS selectors. The elements selected by the selectors are excluded in HTML text sent to the native client.'},
-                    { 'item': 'menu item: Script 1', 'description': 'Native script: User script is executed by NodeJS in the local PC<br>Browser script: User script is executed in sandbox in the web browser<br>None: User script is not executed.'},
+                    { 'item': 'menu item: User Script', 'description': 'Native script: User script is executed by NodeJS in the local PC<br>Browser script: User script is executed in sandbox in the web browser<br>None: User script is not executed.'},
                     { 'item': 'menu item: (script)', 'description': `
                       User javascript code that is executed by Node.js or the web browser.
                       This code must contain the definition of <code>function ScriptFunction(info)</code>, which is executed when menu is clicked.
@@ -225,16 +226,21 @@
                       info.frames[n].html: HTML text of frame document in the page.<br>
                       info.frame[n].id: Id of the frame in the page.<br>
                       info.frame[n].name: name of the frame in the page.<br>
-                      return value will be passed to the next user script (Script 2).<br>
-                      If return value includes "customHTML" key, the contents (HTML text) will be shown in new Tab.<br>
-                      If the custom HTML inculdes buttons with class "send-form-button", the form data ([[name1, value1], [name2, value2], ...]) get by FormData() is send to Script 2 when the button is clicked.
+                      return value will be passed to the action function.<br>
+                      If returned object includes "customHTML" key, its value (HTML text) will be shown in new Tab.<br>
+                      If the custom HTML inculdes buttons that have an attribute "data-action", 
+                      when user clicks the button, 
+                      the action function of the action name specified to the attribute "data-action" is called with the form data as argument.
+                      If returned object does not include "customHTML" key but includes "action" key,
+                      the action function of the action name specified to the "action" key is called immediately.
                    `},
-                    { 'item': 'menu item: Script 2', 'description': 'same as Script 1'},
+                    { 'item': 'menu item: Action Function', 'description': 'same as User Script'},
+                    { 'item': 'menu item: Action Name', 'description': 'the action name of the function'},
                     { 'item': 'menu item: (script)', 'description': `
-                      Same as Script 1 except for the arugment <code>info</code>.
-                      <code>info</code> is a object of information from the previous process:<br>
-                      info.response: return value from the Script 1.<br>
-                      info.customResults.html: the HTML text of the custom HTML page from Script 1.<br>
+                      Same as User Script except for the arugment <code>info</code>.
+                      <code>info</code> is a object of information from the previous user script or action function:<br>
+                      info.response: return value from the previous<br>
+                      info.customResults.formData: the form data ([[name1, value1], [name2, value2], ...]) of the custom page get by FormData()<br>
                    `},
                   ],
                   manualColumns: [

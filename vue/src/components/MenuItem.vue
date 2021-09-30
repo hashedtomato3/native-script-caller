@@ -1,13 +1,13 @@
 <template>
       <div class="panel" animation="slide"
           style="margin:0px; height:100%">
-        <div style="display:inline-block">
-          <div class="xlevel-left" style="display:inline-block">
+        <div style="display:flex">
+          <div class="xlevel-left">
             <a class="panel-block" v-on:click="modalActive = true" href="#">
               {{menu.title}}
             </a>
           </div>
-          <div class="xlevel-right" style="display:inline-block; margin: 0 0 0 auto">
+          <div class="xlevel-right" style="margin: 0 0 0 auto">
             <b-button type="is-primary" v-on:click="$emit('delete'); modalActive=false;" title="Delete">
                 <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />

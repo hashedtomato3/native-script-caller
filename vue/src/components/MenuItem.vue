@@ -1,45 +1,32 @@
 <template>
-      <div class="panel" animation="slide"
-          style="margin:0px; height:100%">
+      <div class="panel" animation="slide" style="xxmargin:0px; height:100%">
         <div style="display:flex">
-          <div class="xlevel-left">
-            <a class="panel-block" v-on:click="modalActive = true" href="#">
-              {{menu.title}}
+          <div style="width:auto; margin: 0 auto 0 0">
+            <a class="xpanel-block" v-on:click="modalActive = true" href="#">
+                {{menu.title}}
             </a>
           </div>
-          <div class="xlevel-right" style="margin: 0 0 0 auto">
-            <b-button type="is-primary" v-on:click="$emit('delete'); modalActive=false;" title="Delete">
-                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
-                </svg>
-            </b-button>
-          </div>
+          <b-button type="is-primary" v-on:click="$emit('delete'); modalActive=false;" title="Delete">
+              <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+              </svg>
+          </b-button>
         </div>
         
-        <b-modal :active="modalActive" @close="modalActive=false" :width="1500" scroll="keep" xxxcan-cancel="false" style="height:100%">
-          <div class="xcard" style=" height:1000px;">
+        <b-modal :active="modalActive" @close="modalActive=false" full-screen scroll="keep" can-cancel="false" style="height:100%">
+          <div class="box" style=" height:1000px;">
 
-            <div class="xcard-content" style=" height:100%;">
-              <div class="level">
-                <div class="level-left">
-                    <b-button type="is-primary" v-on:click="modalActive = false"  title="Close" style="margin:auto 5px">
+              <div style="display:flex">
+                  <b-button type="is-primary" v-on:click="modalActive = false"  title="Close" style="margin:auto 5px">
                       <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M19,3H16.3H7.7H5A2,2 0 0,0 3,5V7.7V16.4V19A2,2 0 0,0 5,21H7.7H16.4H19A2,2 0 0,0 21,19V16.3V7.7V5A2,2 0 0,0 19,3M15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4L13.4,12L17,15.6L15.6,17Z" />
                       </svg>
                   </b-button>
-                    <p class="title is-4">{{menu.title}}</p>
-                </div>
-                <div class="level-right" v-bind:index="index">
-                    <b-button type="is-primary" v-on:click="modalActive = false"  title="Close" style="margin:auto 5px">
-                      <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M19,3H16.3H7.7H5A2,2 0 0,0 3,5V7.7V16.4V19A2,2 0 0,0 5,21H7.7H16.4H19A2,2 0 0,0 21,19V16.3V7.7V5A2,2 0 0,0 19,3M15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4L13.4,12L17,15.6L15.6,17Z" />
-                      </svg>
-                  </b-button>
-                </div>            
+                  <p class="title is-4">{{menu.title}}</p>
               </div>
     
-              <div class="panel-block">
-                <form class="card" style="height:100%">
+              <div class="xxpanel-block">
+                <form class="xxcard" style="height:100%">
                   <b-field label="Title" horizontal>
                       <input class="input" type="text" v-model="menu.title" :title="manualData[3].description">
                   </b-field>
@@ -59,7 +46,48 @@
                   <b-field horizontal>
                     <codemirror v-model="menu.stage[0].nativeScript.nativeScript" :options="cmOptions" />
                   </b-field>
-                  <div v-for="stage in menu.stage.slice(1)" :key="stage.actionName">
+
+
+                  <div class="level" style="margin:0px">
+                    <div class="level-left" style="margin:0px">
+                      <b-field label="Action Functions"></b-field>                      
+                    </div>
+                    <div class="level-left" style="margin:0px">
+                      <b-button type="is-primary" size="is-small" v-on:click="onclick_add">
+                        <div style="display:flex">
+                          <svg style="width:22px;height:22px;" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" />
+                          </svg>
+                        </div>
+                      </b-button>    
+                    </div>
+                  </div>
+
+                  <div v-for="(stage, index) in menu.stage.slice(1)" :key="stage.actionName">
+
+                    <div class="panel" animation="slide" style="xxmargin:0px; height:100%">
+                      <div style="display:flex">
+                        <div style="width:auto; margin: 0 auto 0 0">
+                          <a class="xpanel-block" v-on:click="modalActive2 = index" href="#">
+                              {{stage.actionName}}
+                          </a>
+                        </div>
+                        <b-button type="is-primary" v-on:click="menu.stage.splice(index+1, 1);" title="Delete">
+                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                              <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+                            </svg>
+                        </b-button>
+                      </div>
+                      
+                      <b-modal :active="modalActive2===index" @close="modalActive2=-1" full-screen scroll="keep" xcan-cancel="false" style="height:100%">
+                        <div class="box" style=" height:1000px;">
+
+                        <b-button type="is-primary" v-on:click="modalActive2 = -1"  title="Close" style="margin:auto 5px">
+                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                              <path fill="currentColor" d="M19,3H16.3H7.7H5A2,2 0 0,0 3,5V7.7V16.4V19A2,2 0 0,0 5,21H7.7H16.4H19A2,2 0 0,0 21,19V16.3V7.7V5A2,2 0 0,0 19,3M15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4L13.4,12L17,15.6L15.6,17Z" />
+                            </svg>
+                        </b-button>
+
                         <b-field label="Action Name" horizontal>
                           <input class="input" type="text" v-model="stage.actionName">
                         </b-field>
@@ -73,6 +101,9 @@
                         <b-field>
                           <codemirror v-model="stage.nativeScript.nativeScript" :options="cmOptions" />
                         </b-field>
+                      </b-modal>
+                    </div>
+            
                   </div>
                 </form>
               </div> 
@@ -107,6 +138,7 @@
       data: function() {
         return {
                 modalActive:false,
+                modalActive2:-1,
                 //menu_data:{},
                 cmOptions: {
                   mode: "javascript",
@@ -146,7 +178,27 @@
       },
       computed: {
       },
-      method: {
+      methods: {
+          onclick_add: function() {
+              this.menu.stage.push({
+                    type: "none",
+                    actionName: "New Action",
+                    nativeScript: {
+                      nativeScript:`
+// function ScriptFunction(info)
+//   - info: information of return value from Script1 and custom page
+function ScriptFunction(info) {
+  // user logic
+  return {};
+}`                      
+                    }
+              });
+              console.log(this.menu.stage)
+          },
+          //onclick_delete: function() {
+          //    this.menu.splice(index, 1);
+          //},
+
       },
       components: {
         codemirror,

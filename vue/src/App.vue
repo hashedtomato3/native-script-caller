@@ -91,9 +91,9 @@
                   <b-field label="Menu Items"></b-field>                      
                 </div>
                 <div class="level-left" style="margin:0px">
-                  <b-button type="is-primary" size="is-small" v-on:click="onclick_add">
+                  <b-button type="is-primary" inverted v-on:click="onclick_add">
                     <div style="display:flex">
-                      <svg style="width:22px;height:22px;" viewBox="0 0 24 24">
+                      <svg style="width:24px;height:24px;" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" />
                       </svg>
                     </div>
@@ -270,32 +270,6 @@
           },
           onclick_load: async function() {
               const resp = await chromeRuntimeSendMessage({cmd:"send-native-message", msg:{cmd:"get-data"}});
-              // add stage1 if not exists
-              console.log(resp);
-              resp.settings.menu.forEach(e => {
-                if( e.stage.length < 2 ) { // if old style
-                  e.stage[0].actionName = "";
-                  const stage = {
-                      actionName: "",
-                      type: "none",
-                      nativeScript: {
-                          nativeScript: `
-// function ScriptFunction(info)
-//   - info: information of web page in active tab
-//   - return value: object passed to the browser extension
-function ScriptFunction(info) {
-  // user logic
-}`                      
-                      }
-                  };
-                  e.stage[1] = JSON.parse(JSON.stringify(stage));
-                  e.stage[2] = JSON.parse(JSON.stringify(stage));
-                  e.stage[3] = JSON.parse(JSON.stringify(stage));
-                  e.stage[4] = JSON.parse(JSON.stringify(stage));
-                  e.stage[5] = JSON.parse(JSON.stringify(stage));
-                }
-
-              })
               if( "error" in resp ) { throw resp }
               this.allData = resp;
           },

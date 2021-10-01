@@ -1,12 +1,11 @@
 <template>
-      <div class="panel" animation="slide" style="xxmargin:0px; height:100%">
-        <div style="display:flex">
-          <div style="width:auto; margin: 0 auto 0 0">
-            <a class="xpanel-block" v-on:click="modalActive = true" href="#">
+      <div class="panel" animation="slide" style="margin: 5px 0px 5px 40px; height:100%">
+
+        <div class="my-button" style="display:flex; padding:4px 0 4px 10px; " v-on:click="modalActive = true">
+          <div style="margin: 0 auto 0 0">
                 {{menu.title}}
-            </a>
           </div>
-          <b-button type="is-primary" v-on:click="$emit('delete'); modalActive=false;" title="Delete">
+          <b-button type="is-primary" inverted v-on:click.stop="$emit('delete'); modalActive=false;" title="Delete">
               <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
               </svg>
@@ -17,10 +16,10 @@
           <div class="box" style=" height:1000px;">
 
               <div style="display:flex">
-                  <b-button type="is-primary" v-on:click="modalActive = false"  title="Close" style="margin:auto 5px">
-                      <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M19,3H16.3H7.7H5A2,2 0 0,0 3,5V7.7V16.4V19A2,2 0 0,0 5,21H7.7H16.4H19A2,2 0 0,0 21,19V16.3V7.7V5A2,2 0 0,0 19,3M15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4L13.4,12L17,15.6L15.6,17Z" />
-                      </svg>
+                  <b-button type="is-primary" inverted v-on:click="modalActive = false"  title="Close" style="margin:auto 5px">
+                    <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M13.5 21H6V17H13.5C15.43 17 17 15.43 17 13.5S15.43 10 13.5 10H11V14L4 8L11 2V6H13.5C17.64 6 21 9.36 21 13.5S17.64 21 13.5 21Z" />
+                    </svg>
                   </b-button>
                   <p class="title is-4">{{menu.title}}</p>
               </div>
@@ -29,7 +28,8 @@
                 <form class="xxcard" style="height:100%">
                   <b-field label="Title" horizontal>
                       <input class="input" type="text" v-model="menu.title" :title="manualData[3].description">
-                  </b-field>
+          
+                    </b-field>
                   <b-field label="URL Filter" horizontal>
                     <input class="input" type="text" v-model="menu.trigger.menu.urlFilter"  :title="manualData[4].description">
                   </b-field>
@@ -53,9 +53,9 @@
                       <b-field label="Action Functions"></b-field>                      
                     </div>
                     <div class="level-left" style="margin:0px">
-                      <b-button type="is-primary" size="is-small" v-on:click="onclick_add">
+                      <b-button type="is-primary" inverted v-on:click="onclick_add">
                         <div style="display:flex">
-                          <svg style="width:22px;height:22px;" viewBox="0 0 24 24">
+                          <svg style="width:24px;height:24px;" viewBox="0 0 24 24">
                             <path fill="currentColor" d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" />
                           </svg>
                         </div>
@@ -65,14 +65,12 @@
 
                   <div v-for="(stage, index) in menu.stage.slice(1)" :key="stage.actionName">
 
-                    <div class="panel" animation="slide" style="xxmargin:0px; height:100%">
-                      <div style="display:flex">
-                        <div style="width:auto; margin: 0 auto 0 0">
-                          <a class="xpanel-block" v-on:click="modalActive2 = index" href="#">
+                    <div class="panel" animation="slide" style="margin:5px 0 5px 40px; height:100%">
+                      <div class="my-button" v-on:click="modalActive2 = index" style="display:flex; padding:4px 0px 4px 10px">
+                        <div style="margin: 0 auto 0 0">
                               {{stage.actionName}}
-                          </a>
                         </div>
-                        <b-button type="is-primary" v-on:click="menu.stage.splice(index+1, 1);" title="Delete">
+                        <b-button type="is-primary" inverted v-on:click.stop="menu.stage.splice(index+1, 1);" title="Delete">
                             <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                               <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
                             </svg>
@@ -80,12 +78,11 @@
                       </div>
                       
                       <b-modal :active="modalActive2===index" @close="modalActive2=-1" full-screen scroll="keep" xcan-cancel="false" style="height:100%">
-                        <div class="box" style=" height:1000px;">
-
-                        <b-button type="is-primary" v-on:click="modalActive2 = -1"  title="Close" style="margin:auto 5px">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                              <path fill="currentColor" d="M19,3H16.3H7.7H5A2,2 0 0,0 3,5V7.7V16.4V19A2,2 0 0,0 5,21H7.7H16.4H19A2,2 0 0,0 21,19V16.3V7.7V5A2,2 0 0,0 19,3M15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4L13.4,12L17,15.6L15.6,17Z" />
-                            </svg>
+                        
+                        <b-button type="is-primary" inverted v-on:click="modalActive2 = -1"  title="Close" style="margin:auto 5px">
+                          <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                              <path fill="currentColor" d="M13.5 21H6V17H13.5C15.43 17 17 15.43 17 13.5S15.43 10 13.5 10H11V14L4 8L11 2V6H13.5C17.64 6 21 9.36 21 13.5S17.64 21 13.5 21Z" />
+                          </svg>
                         </b-button>
 
                         <b-field label="Action Name" horizontal>
@@ -211,6 +208,12 @@ function ScriptFunction(info) {
 </script>
 
 <style>
+  .my-button {
+    background-color: white;
+  }
+  .my-button:hover {
+    background-color: whitesmoke;
+  }
 #appxx {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -21,7 +21,7 @@
                         <path fill="currentColor" d="M13.5 21H6V17H13.5C15.43 17 17 15.43 17 13.5S15.43 10 13.5 10H11V14L4 8L11 2V6H13.5C17.64 6 21 9.36 21 13.5S17.64 21 13.5 21Z" />
                     </svg>
                   </b-button>
-                  <p class="title is-4">{{menu.title}}</p>
+                  <p class="title is-4">User Script: {{menu.title}}</p>
               </div>
     
               <div class="xxpanel-block">
@@ -47,23 +47,18 @@
                     <codemirror v-model="menu.stage[0].nativeScript.nativeScript" :options="cmOptions" />
                   </b-field>
 
-
-                  <div class="level" style="margin:0px">
-                    <div class="level-left" style="margin:0px">
-                      <b-field label="Action Functions"></b-field>                      
-                    </div>
-                    <div class="level-left" style="margin:0px">
-                      <b-button type="is-primary" inverted v-on:click="onclick_add">
+                  <b-field horizontal label="Action Functions" style="display:flex">
+                      <b-button type="is-primary" inverted v-on:click="onclick_add" style="margin:0 0 0 auto">
                         <div style="display:flex">
                           <svg style="width:24px;height:24px;" viewBox="0 0 24 24">
                             <path fill="currentColor" d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" />
                           </svg>
                         </div>
                       </b-button>    
-                    </div>
-                  </div>
+                  </b-field>
 
-                  <div v-for="(stage, index) in menu.stage.slice(1)" :key="stage.actionName">
+
+                  <div v-for="(stage, index) in menu.stage.slice(1)" :key="stage.actionName" style="margin:0 0 0 100px">
 
                     <div class="panel" animation="slide" style="margin:5px 0 5px 40px; height:100%">
                       <div class="my-button" v-on:click="modalActive2 = index" style="display:flex; padding:4px 0px 4px 10px">
@@ -77,17 +72,21 @@
                         </b-button>
                       </div>
                       
-                      <b-modal :active="modalActive2===index" @close="modalActive2=-1" full-screen scroll="keep" xcan-cancel="false" style="height:100%">
+                      <b-modal :active="modalActive2===index" @close="modalActive2=-1" full-screen scroll="keep" can-cancel="false" style="height:100%">
                         
-                        <b-button type="is-primary" inverted v-on:click="modalActive2 = -1"  title="Close" style="margin:auto 5px">
-                          <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                              <path fill="currentColor" d="M13.5 21H6V17H13.5C15.43 17 17 15.43 17 13.5S15.43 10 13.5 10H11V14L4 8L11 2V6H13.5C17.64 6 21 9.36 21 13.5S17.64 21 13.5 21Z" />
-                          </svg>
-                        </b-button>
+                        <div style="display:flex">
+                          <b-button type="is-primary" inverted v-on:click="modalActive2 = -1"  title="Close" style="margin:auto 5px">
+                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M13.5 21H6V17H13.5C15.43 17 17 15.43 17 13.5S15.43 10 13.5 10H11V14L4 8L11 2V6H13.5C17.64 6 21 9.36 21 13.5S17.64 21 13.5 21Z" />
+                            </svg>
+                          </b-button>
+                          <p class="title is-4">Action Function: {{stage.actionName}}</p>
+                        </div>                        
 
                         <b-field label="Action Name" horizontal>
-                          <input class="input" type="text" v-model="stage.actionName">
+                          <input class="input" type="text" v-model="stage.actionName" title="action name">
                         </b-field>
+
                         <b-field label="Action Function" horizontal>
                           <label><input type="radio" v-model="stage.type" value="nativeScript">Native Script (Node.js)</label>
                           <span style="width:5px"></span>
@@ -95,7 +94,7 @@
                           <span style="width:5px"></span>
                           <label><input type="radio" v-model="stage.type" value="none">None</label>
                         </b-field>
-                        <b-field>
+                        <b-field horizontal>
                           <codemirror v-model="stage.nativeScript.nativeScript" :options="cmOptions" />
                         </b-field>
                       </b-modal>

@@ -313,18 +313,6 @@ function ScriptFunction(info) {
 }`                      
                     }
                   },
-                  {
-                    type: "none",
-                    nativeScript: {
-                      nativeScript:`
-// function ScriptFunction(info)
-//   - info: information of return value from Script1 and custom page
-function ScriptFunction(info) {
-  // user logic
-  return {};
-}`                      
-                    }
-                  }
                 ]
               });
               console.log(this.allData.settings.menu)

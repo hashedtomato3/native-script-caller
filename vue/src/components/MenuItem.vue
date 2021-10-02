@@ -21,7 +21,7 @@
                         <path fill="currentColor" d="M13.5 21H6V17H13.5C15.43 17 17 15.43 17 13.5S15.43 10 13.5 10H11V14L4 8L11 2V6H13.5C17.64 6 21 9.36 21 13.5S17.64 21 13.5 21Z" />
                     </svg>
                   </b-button>
-                  <p class="title is-4">User Script: {{menu.title}}</p>
+                  <p class="title is-4">[User Script] {{menu.title}}</p>
               </div>
     
               <div class="xxpanel-block">
@@ -58,7 +58,7 @@
                   </b-field>
 
 
-                  <div v-for="(stage, index) in menu.stage.slice(1)" :key="stage.actionName" style="margin:0 0 0 100px">
+                  <div v-for="(stage, index) in menu.stage.slice(1)" :key="index" style="margin:0 0 0 100px">
 
                     <div class="panel" animation="slide" style="margin:5px 0 5px 40px; height:100%">
                       <div class="my-button" v-on:click="modalActive2 = index" style="display:flex; padding:4px 0px 4px 10px">
@@ -80,7 +80,7 @@
                                 <path fill="currentColor" d="M13.5 21H6V17H13.5C15.43 17 17 15.43 17 13.5S15.43 10 13.5 10H11V14L4 8L11 2V6H13.5C17.64 6 21 9.36 21 13.5S17.64 21 13.5 21Z" />
                             </svg>
                           </b-button>
-                          <p class="title is-4">Action Function: {{stage.actionName}}</p>
+                          <p class="title is-4">[Action Function] {{stage.actionName}}</p>
                         </div>                        
 
                         <b-field label="Action Name" horizontal>

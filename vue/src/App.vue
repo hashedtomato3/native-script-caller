@@ -220,12 +220,12 @@
                       User javascript code that is executed by Node.js or the web browser.
                       This code must contain the definition of <code>function ScriptFunction(info)</code>, which is executed when menu is clicked.
                       <code>info</code> is a object of information of Web Page in Active tab:<br>
-                      info.url: URL of the page.<br>
-                      info.html: HTML text of the page<br>
-                      info.tilte: Title of the page.<br>
-                      info.frames[n].html: HTML text of frame document in the page.<br>
-                      info.frame[n].id: Id of the frame in the page.<br>
-                      info.frame[n].name: name of the frame in the page.<br>
+                      - info.url: URL of the page<br>
+                      - info.html: HTML text of the page<br>
+                      - info.tilte: Title of the page<br>
+                      - info.frames[n].html: HTML text of the n'th frame document in the page.<br>
+                      - info.frame[n].id: Id of the n'th frame in the page.<br>
+                      - info.frame[n].name: name of the n'th frame in the page.<br>
                       return value will be passed to the action function.<br>
                       If returned object includes "customHTML" key, its value (HTML text) will be shown in new Tab.<br>
                       If the custom HTML inculdes buttons that have an attribute "data-action", 
@@ -239,8 +239,8 @@
                     { 'item': 'menu item: (script)', 'description': `
                       Same as User Script except for the arugment <code>info</code>.
                       <code>info</code> is a object of information from the previous user script or action function:<br>
-                      info.response: return value from the previous<br>
-                      info.customResults.formData: the form data ([[name1, value1], [name2, value2], ...]) of the custom page get by FormData()<br>
+                      - info.response: return value from the previous<br>
+                      - info.customResults.formData: the form data ([[name1, value1], [name2, value2], ...]) of the custom page get by FormData()<br>
                    `},
                   ],
                   manualColumns: [
@@ -306,7 +306,7 @@
                       nativeScript:`
 // function ScriptFunction(info)
 //   - info: information of web page in active tab
-//   - return value: object passed to the browser extension
+//   - return value: an object passed to the next action function
 function ScriptFunction(info) {
   // user logic
   return {};

@@ -182,7 +182,7 @@
                     nativeScript: {
                       nativeScript:`
 // function ScriptFunction(info)
-//   - info: information of return value from Script1 and custom page
+//   - info: information of return value from User Script and custom page
 function ScriptFunction(info) {
   // user logic
   return {};

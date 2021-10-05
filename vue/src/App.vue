@@ -118,7 +118,56 @@
             <p class="subtitle">Manual</p>
    
             <p class="subtitle is-6">Instructions of Setup page</p>
-            <b-table :data="manualData" :columns="manualColumns" bordered="true" xxsticky-header="true"></b-table>
+         )   <b-table :data="manualData" :columns="manualColumns" bordered="true" xxsticky-header="true"></b-table>
+
+            <br><br>
+            <p class="subtitle is-6">Tutorial of Custom Page</p>
+
+            User script and action functions can return HTML of custom page as following example.
+            The custom page HTML will be shown in new tab when the function returns.
+            
+            <pre><code>
+            // User Script
+            function ScriptFunction(info) {
+              ....
+              return {
+                <red>customHTML</red>: `
+                  <h2>Custom Page</h2>
+                  Please input your name:<br>
+                  <form>
+                    <input type="text" name="username">
+                    <input type="button"  data-action=<red>"action1"</red> value="OK">
+                  </form>
+                `,
+                ....
+            }
+            </code></pre>
+
+            Action function for the button in the custom page can be specified as follows:<br>
+            (1) Register the code of the action function with arbitary action name<br>
+            (2) Put the attribute "data-action" to the button element in the custom page<br>
+            (3) Specify the action name of the action function to the "data-action" attribute<br>
+            
+            The action function will be executed when user click the button.<br>
+            
+            The following is an example of action function.
+            
+            <pre><code>
+            // Action function
+            // Action name = <red>"action1"</red>
+            function ScriptFunction(info) {
+              const formData = <red>info.customResults.formData<red>; // = [["key1", "vallue1"], ["key2", "value2"], ...]
+              const username = formData.find(e => e[0] === "username")[1];
+              return {
+                customHTML: `
+                  <h2>Custom Page 2</h2>
+                  Your name is ${username}.
+                `
+            }
+            </code></pre>
+            
+            The argument <code>info</code> includes the form data from the custom page.
+            
 
             <br><br>
             <p class="subtitle is-6">Debug</p>

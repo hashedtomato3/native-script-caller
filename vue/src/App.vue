@@ -128,19 +128,6 @@
             
             <pre><code>
             // User Script
-            function ScriptFunction(info) {
-              ....
-              return {
-                <red>customHTML</red>: `
-                  <h2>Custom Page</h2>
-                  Please input your name:<br>
-                  <form>
-                    <input type="text" name="username">
-                    <input type="button"  data-action=<red>"action1"</red> value="OK">
-                  </form>
-                `,
-                ....
-            }
             </code></pre>
 
             Action function for the button in the custom page can be specified as follows:<br>
@@ -280,7 +267,7 @@
                       If the custom HTML inculdes buttons that have an attribute "data-action", 
                       when user clicks the button, 
                       the action function of the action name specified to the attribute "data-action" is called with the form data as argument.
-                      If returned object does not include "customHTML" key but includes "action" key,
+                      If returned object does not incude "customHTML" and includes "action" key,
                       the action function of the action name specified to the "action" key is called immediately.
                    `},
                     { 'item': 'menu item: Action Function', 'description': 'same as User Script'},

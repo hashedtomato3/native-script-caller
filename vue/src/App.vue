@@ -262,13 +262,15 @@
                       - info.frames[n].html: HTML text of the n'th frame document in the page.<br>
                       - info.frame[n].id: Id of the n'th frame in the page.<br>
                       - info.frame[n].name: name of the n'th frame in the page.<br>
-                      return value will be passed to the action function.<br>
-                      If returned object includes "customHTML" key, its value (HTML text) will be shown in new Tab.<br>
-                      If the custom HTML inculdes buttons that have an attribute "data-action", 
+                      This function should return object {html:<html>, action:<actionName>, data:<object>}.<br>
+                      - The key "html" and "action" are exclusive.<br>
+                      - <html> is a HTML text of custom page that will be shown in new Tab.<br>
+                      - The custom page can include forms such that a specified action function will be called when user clicks the form.<br>
+                      - If the custom HTML inculdes buttons that have an attribute "data-action", 
                       when user clicks the button, 
-                      the action function of the action name specified to the attribute "data-action" is called with the form data as argument.
-                      If returned object does not incude "customHTML" and includes "action" key,
-                      the action function of the action name specified to the "action" key is called immediately.
+                      the action function of the action name specified to the attribute "data-action" is called with the form data as argument.<br>
+                      - <actionName> is an action name of an action function that wlii be called immediately.<br>
+                      - <data> is an object that is passed to the next action function.
                    `},
                     { 'item': 'menu item: Action Function', 'description': 'same as User Script'},
                     { 'item': 'menu item: Action Name', 'description': 'the action name of the function'},

@@ -14,9 +14,9 @@
         console.log("receive message")
         console.log(message)
         // custom HTML
-        if( "customHTML" in message ){
+        if( "html" in message ){
             // set HTML
-            customBlock.innerHTML = message.customHTML;
+            customBlock.innerHTML = message.html;
             console.log("customHTML")
             // set response button
             const btns = document.querySelectorAll("[data-action]");
@@ -27,11 +27,11 @@
                         if( evt.target.form ){
                             const fd = new FormData(evt.target.form);
                             const fdarr = Array.from(fd.entries());
-                            sendResponse({result:"onclick", formData:fdarr, formAction:evt.target.dataset['action']});
+                            sendResponse({result:"onclick", form:fdarr, action:evt.target.dataset['action']});
                         } else {
-                            sendResponse({result:"onclick", formData:[]});
+                            sendResponse({result:"onclick", form:[]});
                         }
-                        window.open('about:blank', '_self').close();
+                        window.open('about:blank', '_self').close(); // close window
                 }
             });
             if( btns.length > 0 ){ // only if the button exists
@@ -39,7 +39,7 @@
             }
         }
         // others
-        sendResponse({result:"nothing done"});
+        sendResponse({result:"no custom HTML or no data-action attribute"});
     });
 
     try {

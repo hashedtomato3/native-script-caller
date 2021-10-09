@@ -309,9 +309,10 @@ async function actionForClickMenuItem(message) {
         let script = stage.nativeScript.nativeScript;
         scriptType = stage.type;
         results = JSON.parse(JSON.stringify(results)); // deep copy
+        const info = {form:results.customResults.form, data:results.data}
         console.info("send to action function & custom")
-        console.log({script, info:results, scriptType});
-        results = await executeScriptAndCustom(script, results, scriptType);
+        console.log({script, info, scriptType});
+        results = await executeScriptAndCustom(script, info, scriptType);
         console.info("return from action function & custom")
         console.log(results)
         next_action = results.action;
@@ -325,7 +326,6 @@ async function executeScriptAndCustom(script, info, scriptType = "nativeScript")
     let results = {};
     if( scriptType == "nativeScript" ){
         let msg = {cmd:"click", nativeScript:script, info:info};
-        //let msg = {cmd:"click", idx:message.idx, script:script, info:results};
         results = await sendMessageToNativeHost(msg);
     } else if( scriptType == "browserScript" ){
         let msg = {script:script, info:info};
@@ -333,8 +333,9 @@ async function executeScriptAndCustom(script, info, scriptType = "nativeScript")
     }
 
     // execute custom Page
-    if( "customHTML" in results.response ) {
+    if( "html" in results.response ) {
         console.debug("custom html")
+        // create tab for custom page
         const url = chrome.runtime.getURL("custom_page.html")
         const tab = await chrome.tabs.create({url: url});
         //console.log(tab)
@@ -348,26 +349,26 @@ async function executeScriptAndCustom(script, info, scriptType = "nativeScript")
                 break;
             }
         }
-        // send message to custom_page
+        // send message to custom page tab
         const customPageResults = await chromeTabsSendMessage(tab.id, results.response);
         console.info("return value from custom page:");
         console.log(customPageResults);
-        // check error in injection code
+        // check error in custom page
         if(customPageResults.error){
             throw customPageResults; // return error
         }
         results.customResults = customPageResults; // add costom results
-        if( "formAction" in results.customResults ) {
-            results.action = results.customResults.formAction; // set action
+        if( "action" in results.customResults ) { // if data-action button is clicked
+            results.action = results.customResults.action; // set action
         }
-    } else if( "action" in results.response ) {
+    } else if( "action" in results.response ) { // if user script or action function returns action
         results.action = results.response.action;
     }
 
-    return results; // = {response:xxx, action:xxx, customResults:xxx}
+    return results; // = {action:<nextActionName>, response:<returnValueOfScript>, customResults:<returnValueOfCustomForm>}
 }
 
-async function executeSandboxScript(msg){
+async function executeSandboxScript(msg){ // msg = { script:<script>, info:<info> }
         //console.info("creating tab for sandbox page")
         // create tab of sandbox page
         const url = chrome.runtime.getURL("sandbox_page.html")
@@ -383,8 +384,7 @@ async function executeSandboxScript(msg){
                 break;
             }
         }
-        // send message to sandbox_page
-        //const msg = {js:"function SandboxScriptFunction(indata){return 'result: '+indata}", indata:"abcde"}
+        // send starter message to sandbox_page
         console.info("send message to sandbox page:")
         console.log(msg);
         const sandboxPageResults = await chromeTabsSendMessage(tab.id, msg);
@@ -394,5 +394,5 @@ async function executeSandboxScript(msg){
         if(sandboxPageResults.error){
             throw sandboxPageResults; // return error
         }
-        return sandboxPageResults;
+        return sandboxPageResults; // { response:<returnValue> }
  }

@@ -182,7 +182,8 @@
                     nativeScript: {
                       nativeScript:`
 // function ScriptFunction(info)
-//   - info: information of return value from User Script and custom page
+//   - info: {form:<formData>, data:<dataFromPreviousScript>}
+//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}
 function ScriptFunction(info) {
   // user logic
   return {};

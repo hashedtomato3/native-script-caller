@@ -343,7 +343,7 @@
                       nativeScript:`
 // function ScriptFunction(info)
 //   - info: information of web page in active tab
-//   - return value: an object passed to the next action function
+//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}
 function ScriptFunction(info) {
   // user logic
   return {};

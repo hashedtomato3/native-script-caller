@@ -89,17 +89,17 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         // setup browser action icon and menu
         setupAll()
         .then((value)=>sendResponse(value))
-        .catch((err)=>sendResponse({error:err.error, name:err.name, message:err.message, stack:err.stack, source:err.source}));
+        .catch((err)=>{console.log(err); sendResponse({error:err.error, name:err.name, message:err.message, stack:err.stack, source:err.source})});
     } else if( message.cmd === "click" ){ // on click of menu item
         actionForClickMenuItem(message)
         .then((value)=>sendResponse(value))
-        .catch((err)=>sendResponse({error:err.error, name:err.name, message:err.message, stack:err.stack, source:err.source}));
+        .catch((err)=>{console.log(err); sendResponse({error:err.error, name:err.name, message:err.message, stack:err.stack, source:err.source})});
     } else if( message.cmd === "get-common" ){ // 
         sendResponse(common);
     } else if( message.cmd === "send-native-message" ){
         sendMessageToNativeHost(message.msg)
         .then((value)=>sendResponse(value))
-        .catch((err)=>sendResponse({error:err.error, name:err.name, message:err.message, stack:err.stack, source:err.source}));
+        .catch((err)=>{console.log(err); sendResponse({error:err.error, name:err.name, message:err.message, stack:err.stack, source:err.source})});
     }    
     return true; // this is nessesary for response to caller page
 });
@@ -309,7 +309,7 @@ async function actionForClickMenuItem(message) {
         let script = stage.nativeScript.nativeScript;
         scriptType = stage.type;
         results = JSON.parse(JSON.stringify(results)); // deep copy
-        const info = {form:results.customResults.form, data:results.data}
+        const info = {form:results.customResults?.form, data:results.response?.data}
         console.info("send to action function & custom")
         console.log({script, info, scriptType});
         results = await executeScriptAndCustom(script, info, scriptType);

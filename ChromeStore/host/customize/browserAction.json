@@ -36,13 +36,13 @@
                 {
                     "type": "nativeScript",
                     "nativeScript": {
-                        "nativeScript": "// function NativeScriptFunction(info)\n//   - info: information about web page in active tab\n//   - return value: object passed to the browser extension\nfunction ScriptFunction(info) {\n    const execFile = require('child_process').execFile;\n    const title = info.title;\n    execFile('cmd',  ['/c', 'start', 'cmd', '/c', `echo Title = ${title} & pause`]);\n    \n    //execFile('cmd',  ['/c', 'start', 'powershell', '-c', 'echo xxx; Read-Host \"Hit Return\"']);\n    //execFile('notepad.exe');\n   \n    return {action:\"action1\", html:info.html};  // return to browser extension\n}\n"
+                        "nativeScript": "// function NativeScriptFunction(info)\n//   - info: information about web page in active tab\n//   - return value: object passed to the browser extension\nfunction ScriptFunction(info) {\n    const execFile = require('child_process').execFile;\n    const title = info.title;\n    execFile('cmd',  ['/c', 'start', 'cmd', '/c', `echo Title = ${title} & pause`]);\n    \n    //execFile('cmd',  ['/c', 'start', 'powershell', '-c', 'echo xxx; Read-Host \"Hit Return\"']);\n    //execFile('notepad.exe');\n   \n    return {action:\"action1\", data:info.html};  // return to browser extension\n}\n"
                     }
                 },
                 {
                     "type": "browserScript",
                     "nativeScript": {
-                        "nativeScript": "function ScriptFunction(info){\n  const domparser = new DOMParser();\n  const doc = domparser.parseFromString(info.response.html, \"text/html\");\n  let t = doc.querySelector(\"title\").innerText;\n  let url = 'https://search.yahoo.com/search?p=' + t;\n  window.open(url);\n  return {customHTML:\"<h3>TITLE:  \"+t+\"</h3>\"};\n}\n\n"
+                        "nativeScript": "function ScriptFunction(info){\n  const domparser = new DOMParser();\n  const doc = domparser.parseFromString(info.data, \"text/html\");\n  let t = doc.querySelector(\"title\").innerText;\n  let url = 'https://search.yahoo.com/search?p=' + t;\n  window.open(url);\n  return {html:\"<h3>TITLE:  \"+t+\"</h3>\"};\n}\n\n"
                     },
                     "actionName": "action1"
                 }
@@ -76,13 +76,13 @@
                 {
                     "type": "browserScript",
                     "nativeScript": {
-                        "nativeScript": "// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: object passed to the action function\nfunction ScriptFunction(info) {\n  return {\n    customHTML:`\n    \t<h3>Custom page 1<h3><br>\n        <form>\n        \tPlease input your name: \n            <input type='text' name='yourname'>\n            <input type='button' data-action='action1' value='OK'>\n        </form>`\n  };\n}\n"
+                        "nativeScript": "// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: object passed to the action function\nfunction ScriptFunction(info) {\n  return {\n    html:`\n    \t<h3>Custom page 1<h3><br>\n        <form>\n        \tPlease input your name: \n            <input type='text' name='yourname'>\n            <input type='button' data-action='action1' value='OK'>\n        </form>`\n  };\n}\n"
                     }
                 },
                 {
                     "type": "browserScript",
                     "nativeScript": {
-                        "nativeScript": "function ScriptFunction(info) {\n  const formData = info.customResults.formData;  // = [[\"name1\", \"value1\"], [\"name2\", \"value2\"], ...]\n  const yourName = formData.find(e => e[0] === \"yourname\")[1];\n  return {\n    customHTML:`\n        \t<h3>Custom page 2<h3>\n        \t<p>your name is ${yourName}<p>\n            <form>\n                \t<input type='button' data-action='none' value='OK'>\n            </form>`\n  };\n}\n"
+                        "nativeScript": "function ScriptFunction(info) {\n  const formData = info.form;  // = [[\"name1\", \"value1\"], [\"name2\", \"value2\"], ...]\n  const yourName = formData.find(e => e[0] === \"yourname\")[1];\n  return {\n    html:`\n        \t<h3>Custom page 2<h3>\n        \t<p>your name is ${yourName}<p>\n            <form>\n                \t<input type='button' data-action='none' value='OK'>\n            </form>`\n  };\n}\n"
                     },
                     "actionName": "action1"
                 }

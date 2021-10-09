@@ -144,6 +144,7 @@
                   autoCloseBrackets: true,
                   gutters: ["CodeMirror-lint-markers"],
                   lint: {esversion:6},
+                  //viewportMargin:"Infinity",
                 },
         };
       },
@@ -213,6 +214,9 @@ function ScriptFunction(info) {
   }
   .my-button:hover {
     background-color: whitesmoke;
+  }
+  .CodeMirror {
+    height: auto;
   }
 #appxx {
   font-family: Avenir, Helvetica, Arial, sans-serif;

@@ -121,7 +121,7 @@
          )   <b-table :data="manualData" :columns="manualColumns" bordered="true" xxsticky-header="true"></b-table>
 
             <br><br>
-            <p class="subtitle is-6">Tutorial of Custom Page</p>
+            <p class="subtitle is-6">Tutorial of Custom Page and Action function</p>
 
             User script and action functions can return HTML of custom page as following example.
             The custom page HTML will be shown in new tab when the function returns.
@@ -254,7 +254,8 @@
                     { 'item': 'menu item: User Script', 'description': 'Native script: User script is executed by NodeJS in the local PC<br>Browser script: User script is executed in sandbox in the web browser<br>None: User script is not executed.'},
                     { 'item': 'menu item: (script)', 'description': `
                       User javascript code that is executed by Node.js or the web browser.
-                      This code must contain the definition of <code>function ScriptFunction(info)</code>, which is executed when menu is clicked.
+                      This code must contain only the definition of <code>function ScriptFunction(info)</code>, 
+                      which is executed when the menu item is clicked.
                       <code>info</code> is a object of information of Web Page in Active tab:<br>
                       - info.url: URL of the page<br>
                       - info.html: HTML text of the page<br>
@@ -262,23 +263,21 @@
                       - info.frames[n].html: HTML text of the n'th frame document in the page.<br>
                       - info.frame[n].id: Id of the n'th frame in the page.<br>
                       - info.frame[n].name: name of the n'th frame in the page.<br>
-                      This function should return object {html:<html>, action:<actionName>, data:<object>}.<br>
-                      - The key "html" and "action" are exclusive.<br>
-                      - <html> is a HTML text of custom page that will be shown in new Tab.<br>
-                      - The custom page can include forms such that a specified action function will be called when user clicks the form.<br>
-                      - If the custom HTML inculdes buttons that have an attribute "data-action", 
-                      when user clicks the button, 
-                      the action function of the action name specified to the attribute "data-action" is called with the form data as argument.<br>
-                      - <actionName> is an action name of an action function that wlii be called immediately.<br>
-                      - <data> is an object that is passed to the next action function.
+                      Return value is an object that may have the following keys.
+                      The key "html" and "action" are exclusive.<br>
+                      - html: a HTML text of custom page that will be shown in new Tab. 
+                        When user clicks a form in the page, specified action function will be called.<br>
+                      - action: an action function name that wlii be called immediately.<br>
+                      - data: an object that is passed to the next action function.<br>
+                      Action function name can be specified to the attribute "data-action" of buttons in the form in the custom page.<br>
                    `},
                     { 'item': 'menu item: Action Function', 'description': 'same as User Script'},
                     { 'item': 'menu item: Action Name', 'description': 'the action name of the function'},
                     { 'item': 'menu item: (script)', 'description': `
-                      Same as User Script except for the arugment <code>info</code>.
-                      <code>info</code> is a object of information from the previous user script or action function:<br>
-                      - info.response: return value from the previous<br>
-                      - info.customResults.formData: the form data ([[name1, value1], [name2, value2], ...]) of the custom page get by FormData()<br>
+                      Same as user script except for the arugment <code>info</code>.
+                      <code>info</code> is a object that may have the following keys:<br>
+                      - info.form: the form data ([[name1, value1], [name2, value2], ...]) from the custom page.<br>
+                      - info.data: "data" property of the object returned by the previous action function or user script.<br>
                    `},
                   ],
                   manualColumns: [

@@ -6,11 +6,32 @@
     },
     "menu": [
         {
-            "title": "Google: Search by Yahoo",
-            "injectionScript": "alert(\"sample of injection code\");",
+            "title": "Custom Page Example",
             "trigger": {
                 "menu": {
-                    "urlFilter": "https://www.google.com/*",
+                    "removal": "script"
+                }
+            },
+            "stage": [
+                {
+                    "type": "browserScript",
+                    "nativeScript": {
+                        "nativeScript": "// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info) {\n  return {\n    html:`\n    \t<h3>Custom page 1<h3><br>\n        <form>\n        \tPlease input your name: \n            <input type='text' name='yourname'>\n            <input type='button' data-action='action1' value='OK'>\n        </form>`\n  };\n}\n"
+                    }
+                },
+                {
+                    "type": "browserScript",
+                    "nativeScript": {
+                        "nativeScript": "// function ScriptFunction(info)\n//   - info: {form:<formData>, data:<dataFromPreviousScript>}\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info) {\n  const formData = info.form;  // = [[\"name1\", \"value1\"], [\"name2\", \"value2\"], ...]\n  const yourName = formData.find(e => e[0] === \"yourname\")[1];\n  return {\n    html:`\n        \t<h3>Custom page 2<h3>\n        \t<p>your name is ${yourName}<p>\n            <form>\n                \t<input type='button' data-action='none' value='OK'>\n            </form>`\n  };\n}\n"
+                    },
+                    "actionName": "action1"
+                }
+            ]
+        },
+        {
+            "title": "Native and Action Example",
+            "trigger": {
+                "menu": {
                     "removal": "script"
                 }
             },
@@ -18,7 +39,14 @@
                 {
                     "type": "nativeScript",
                     "nativeScript": {
-                        "nativeScript": "// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info) {\n    const { JSDOM } = require(\"jsdom\");\n    const execFile = require('child_process').execFile;\n\n    const html = info.html;\n    const dom = new JSDOM(html);\n    const doc = dom.window.document;\n    const query = doc.querySelector(\"input[name='q']\").value;\n    execFile('cmd',  ['/c', 'start', '\"title\"', 'https://search.yahoo.com/search?p=' + query]);\n   \n    return {};\n}\n"
+                        "nativeScript": "// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info) {\n  \tconst execFile = require('child_process').execFile;\n    execFile(\"notepad.exe\",  []);   \n    return {action:\"action1\", data:info.title};\n}\n"
+                    }
+                },
+                {
+                    "type": "browserScript",
+                    "actionName": "action1",
+                    "nativeScript": {
+                        "nativeScript": "\n// function ScriptFunction(info)\n//   - info: {form:<formData>, data:<dataFromPreviousScript>}\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info) {\n  // open Google page\n  const title = info.data;\n  window.open(\"http://www.google.com/search?q=\" + title);\n  // show custom page\n  return {html:\"<h1>Costom Page</h1><h2>NotePad and Google Page are opened.</h2>\"};\n}"
                     }
                 }
             ]
@@ -34,15 +62,15 @@
             },
             "stage": [
                 {
-                    "type": "nativeScript",
+                    "type": "browserScript",
                     "nativeScript": {
-                        "nativeScript": "// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info) {\n    const execFile = require('child_process').execFile;\n    const title = info.title;\n    execFile('cmd',  ['/c', 'start', 'cmd', '/c', `echo Title = ${title} & pause`]);\n    \n    //execFile('cmd',  ['/c', 'start', 'powershell', '-c', 'echo xxx; Read-Host \"Hit Return\"']);\n    //execFile('notepad.exe');\n   \n    return {action:\"action1\", data:info.html};  // return to browser extension\n}\n"
+                        "nativeScript": "// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info) {\n  // extract title of active page\n  const domparser = new DOMParser();\n  const doc = domparser.parseFromString(info.html, \"text/html\");\n  const title = doc.querySelector(\"title\").innerText;\n  // call action  \n  return {action:\"action1\", data:title};\n}\n"
                     }
                 },
                 {
-                    "type": "browserScript",
+                    "type": "nativeScript",
                     "nativeScript": {
-                        "nativeScript": "// function ScriptFunction(info)\n//   - info: {form:<formData>, data:<dataFromPreviousScript>}\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info){\n  const domparser = new DOMParser();\n  const doc = domparser.parseFromString(info.data, \"text/html\");\n  let t = doc.querySelector(\"title\").innerText;\n  let url = 'https://search.yahoo.com/search?p=' + t;\n  window.open(url);\n  return {html:\"<h3>TITLE:  \"+t+\"</h3>\"};\n}\n\n"
+                        "nativeScript": "// function ScriptFunction(info)\n//   - info: {form:<formData>, data:<dataFromPreviousScript>}\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info) {\n    const title = info.data;\n    const execFile = require('child_process').execFile;\n    execFile('cmd',  ['/c', 'start', 'cmd', '/c', `echo Title = ${title} & pause`]);    \n    //execFile('notepad.exe');\n   \n    return {};\n}\n"
                     },
                     "actionName": "action1"
                 }
@@ -66,25 +94,20 @@
             ]
         },
         {
-            "title": "Custom Page Example",
+            "title": "Google: Search by Yahoo (jsdom required)",
+            "injectionScript": "alert(\"sample of injection code\");",
             "trigger": {
                 "menu": {
+                    "urlFilter": "https://www.google.com/*",
                     "removal": "script"
                 }
             },
             "stage": [
                 {
-                    "type": "browserScript",
+                    "type": "nativeScript",
                     "nativeScript": {
-                        "nativeScript": "// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info) {\n  return {\n    html:`\n    \t<h3>Custom page 1<h3><br>\n        <form>\n        \tPlease input your name: \n            <input type='text' name='yourname'>\n            <input type='button' data-action='action1' value='OK'>\n        </form>`\n  };\n}\n"
+                        "nativeScript": "// function ScriptFunction(info)\n//   - info: information of web page in active tab\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info) {\n    const { JSDOM } = require(\"jsdom\");\n    const execFile = require('child_process').execFile;\n\n    const html = info.html;\n    const dom = new JSDOM(html);\n    const doc = dom.window.document;\n    const query = doc.querySelector(\"input[name='q']\").value;\n    execFile('cmd',  ['/c', 'start', '\"title\"', 'https://search.yahoo.com/search?p=' + query]);\n   \n    return {};\n}\n"
                     }
-                },
-                {
-                    "type": "browserScript",
-                    "nativeScript": {
-                        "nativeScript": "// function ScriptFunction(info)\n//   - info: {form:<formData>, data:<dataFromPreviousScript>}\n//   - return value: {html:<customPageHTML>, action:<actionName>, data:<dataForNextActionFunction>}\nfunction ScriptFunction(info) {\n  const formData = info.form;  // = [[\"name1\", \"value1\"], [\"name2\", \"value2\"], ...]\n  const yourName = formData.find(e => e[0] === \"yourname\")[1];\n  return {\n    html:`\n        \t<h3>Custom page 2<h3>\n        \t<p>your name is ${yourName}<p>\n            <form>\n                \t<input type='button' data-action='none' value='OK'>\n            </form>`\n  };\n}\n"
-                    },
-                    "actionName": "action1"
                 }
             ]
         }

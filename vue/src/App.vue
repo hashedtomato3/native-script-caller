@@ -117,47 +117,34 @@
           <div v-if="menuActiveManual" class="is-fullscreen">
             <p class="subtitle">Manual</p>
    
-            <p class="subtitle is-6">Instructions of Setup page</p>
-         )   <b-table :data="manualData" :columns="manualColumns" bordered="true" xxsticky-header="true"></b-table>
+            <p class="subtitle is-8">Instructions of Setup page</p>
+            <b-table :data="manualData" :columns="manualColumns" bordered="true" xxsticky-header="true"></b-table>
 
             <br><br>
-            <p class="subtitle is-6">Tutorial of Custom Page and Action function</p>
+            <p class="subtitle is-8">Tutorial of Custom Page and Action function</p>
 
-            User script and action functions can return HTML of custom page as following example.
-            The custom page HTML will be shown in new tab when the function returns.
+            <p>User script and action functions can return HTML of custom page as following example.
+            The custom page will be shown in new tab when the function returns.</p>
             
-            <pre><code>
-            // User Script
-            </code></pre>
+            <img src="/customPage1.png" width="900" border="1" style="margin:10px">
 
-            Action function for the button in the custom page can be specified as follows:<br>
-            (1) Register the code of the action function with arbitary action name<br>
-            (2) Put the attribute "data-action" to the button element in the custom page<br>
-            (3) Specify the action name of the action function to the "data-action" attribute<br>
-            
-            The action function will be executed when user click the button.<br>
-            
-            The following is an example of action function.
-            
-            <pre><code>
-            // Action function
-            // Action name = <red>"action1"</red>
-            function ScriptFunction(info) {
-              const formData = <red>info.customResults.formData<red>; // = [["key1", "vallue1"], ["key2", "value2"], ...]
-              const username = formData.find(e => e[0] === "username")[1];
-              return {
-                customHTML: `
-                  <h2>Custom Page 2</h2>
-                  Your name is ${username}.
-                `
-            }
-            </code></pre>
-            
+            <p>
+            As the above example, action functions can be attatched to the forms in the custom page, 
+            by specifying the action name of the action function to the attribute "data-action" 
+            in the button element.            
+            The action function will be executed when user click the button.
+            </p>
+
+            <br>
+            <p>The following is an example of definition of the action function.
             The argument <code>info</code> includes the form data from the custom page.
-            
+            </p>
 
+            <img src="/customPage2.png" width="900" border="1"  style="margin:10px">
+            
+          
             <br><br>
-            <p class="subtitle is-6">Debug</p>
+            <p class="subtitle is-8">Debug</p>
   
             Select the blue link of "background.html" next to Inspect views
             in the Chrome extension management page,
@@ -167,7 +154,7 @@
 
             <br>
             <br>
-            <p class="subtitle is-6">Where setup info stored</p>
+            <p class="subtitle is-8">Where setup info stored</p>
 
             Menu specification and Injection and Native scripts are stored in
             <code>customize/browserAction.json</code> file
@@ -177,7 +164,7 @@
 
             <br>
             <br>
-            <p class="subtitle is-6">Update Setup</p>
+            <p class="subtitle is-8">Update Setup</p>
             After modificaion of the above <code>customize/*</code> files,
             click the following button or link to refresh setup.
             <br>

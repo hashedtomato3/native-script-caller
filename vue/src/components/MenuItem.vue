@@ -29,7 +29,7 @@
                   <b-field label="Title" horizontal>
                       <input class="input" type="text" v-model="menu.title" :title="manualData[3].description">
           
-                    </b-field>
+                  </b-field>
                   <b-field label="URL Filter" horizontal>
                     <input class="input" type="text" v-model="menu.trigger.menu.urlFilter"  :title="manualData[4].description">
                   </b-field>
@@ -40,8 +40,6 @@
                     <label><input type="radio" v-model="menu.stage[0].type" value="nativeScript">Native Script (Node.js)</label>
                     <span style="width:5px"></span>
                     <label><input type="radio" v-model="menu.stage[0].type" value="browserScript">Browser Script (sandbox)</label>
-                    <span style="width:5px"></span>
-                    <label><input type="radio" v-model="menu.stage[0].type" value="none">None</label>
                   </b-field>
                   <b-field horizontal>
                     <codemirror v-model="menu.stage[0].nativeScript.nativeScript" :options="cmOptions" />
@@ -91,8 +89,6 @@
                           <label><input type="radio" v-model="stage.type" value="nativeScript">Native Script (Node.js)</label>
                           <span style="width:5px"></span>
                           <label><input type="radio" v-model="stage.type" value="browserScript">Browser Script (sandbox)</label>
-                          <span style="width:5px"></span>
-                          <label><input type="radio" v-model="stage.type" value="none">None</label>
                         </b-field>
                         <b-field horizontal>
                           <codemirror v-model="stage.nativeScript.nativeScript" :options="cmOptions" />
@@ -178,7 +174,7 @@
       methods: {
           onclick_add: function() {
               this.menu.stage.push({
-                    type: "none",
+                    type: "nativeScript",
                     actionName: "New Action",
                     nativeScript: {
                       nativeScript:`

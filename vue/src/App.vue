@@ -273,9 +273,6 @@
       computed: {
       },
       methods: {
-          // isComponentModalActive: function(/*index*/){
-          //     return this.ComponentModalActive === 0;
-          // },
           onclick_save: async function() {
               const resp = await chromeRuntimeSendMessage({cmd:"send-native-message", msg:{cmd: "save-data", data:this.allData}});
               if( "error" in resp ) { throw resp }
@@ -287,12 +284,6 @@
               this.allData = resp;
           },
 
-          // onclick_open: function(index){
-          //     this.ComponentModalActive = index;
-          // },
-          // onclick_close: function(/*index*/){
-          //     this.ComponentModalActive = -1;
-          // },
           onclick_setup: async function(){
               const resp = await chromeRuntimeSendMessage({cmd:"setup"});
               if( "error" in resp ) { throw resp }
@@ -328,13 +319,7 @@ function ScriptFunction(info) {
                   },
                 ]
               });
-              console.log(this.allData.settings.menu)
           },
-          // onclick_delete: function(evt) {
-          //     let i = evt.target.closest("div[index]").getAttribute("index");
-          //     this.allData.settings.menu.splice(i, 1);
-          //     this.ComponentModalActive = -1;
-          // },
           alertInstallation(errmes) {
                 this.$buefy.dialog.alert({
                     title: 'Native Client might NOT be installed',
@@ -351,6 +336,7 @@ function ScriptFunction(info) {
       created: async function(){
         // get common parameters
         const common = await chromeRuntimeSendMessage({cmd:"get-common"});
+
         // set host.zip link
         const manifest = {
             "name": common.appName,
@@ -362,12 +348,6 @@ function ScriptFunction(info) {
             ]
         };
         const manifestJson = JSON.stringify(manifest, null, '\t');
-        /*
-        const blob = new Blob([manifestJson], {
-            type: 'text/plain',
-        });
-        this.manifestDownloadLink = URL.createObjectURL(blob);
-        */
         const resp = await fetch("/host.zip");
         const host_blob = await resp.blob();
         const zip = new JSZip();
@@ -389,7 +369,7 @@ function ScriptFunction(info) {
 </script>
 
 <style>
-#appxx {
+#appxxxx {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

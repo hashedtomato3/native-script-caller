@@ -7,8 +7,8 @@ Features:
 - User script can be a Node.js Javascript executed in the local PC
   (Arbitary program of local PC can be called from Node.js scirpt)
 - User script can be javascript executed in sandbox in the web browser
-- User script receives information of the page in active tab (URL, title, HTML, etc.)
-- User script can include a HTML text for a custom page which would be used to display message or user input form
+- User script receives info. of the active page (URL, title, HTML, etc.)
+- User script can include a HTML text of a custom page which would be used to display messages or user input forms
 - Action functions for the input forms can be written in natieve or browser Javascript.
 - Action function receives the form data from custom page 
   and return value from the previous user script or action function.

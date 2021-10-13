@@ -1,21 +1,19 @@
 
-Customizable MENU to run user native/browser javascript and custom pages
+This extension provides a customizable menu to run user scripts (native or browser Javascript) and arbitary loccal PC programs. User script can include HTML of custom page to display messages or input forms. Action functions for the input forms can be written in native or browser Javascript.
 
-This extension provides a customizable menu to run user scripts (native or browser Javascript) and arbitary loccal PC programs.
-User script can include custom page HTML to display messages or input forms.
-Action functions for the input forms can be written in natieve or browser Javascript.
-
-Details:
-- Provides Customizable icon and menu in Chrome toolbar and context menu
+Features:
+- Customizable icon and menu in Chrome toolbar and context menu
 - By clicking the menu item, user Javascript code is executed
-- User script can be a Node.js script which will be executed in the local PC
+- User script can be a Node.js Javascript executed in the local PC
   (Arbitary program of local PC can be called from Node.js scirpt)
-- User script can be javascript which will be executed in sandbox in the web browser
+- User script can be javascript executed in sandbox in the web browser
 - User script receives information of the page in active tab (URL, title, HTML, etc.)
 - User script can include a HTML text for a custom page which would be used to display message or user input form
 - Action functions for the input forms can be written in natieve or browser Javascript.
-- Action function receives the form data from custom page and return value from the previous user script/action function.
-- Action function also includes custom page HTNL and can be called directly after the user script or another action function.
+- Action function receives the form data from custom page 
+  and return value from the previous user script or action function.
+- Action function also can include custom page HTML
+- Action function can be called directly from the user script or action function.
 - Filter menu items by prefix of URL of active page
 - For Windows PC only
 

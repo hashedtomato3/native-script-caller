@@ -86,19 +86,13 @@
               <b-field label="Icon">
                 <input class="input" type="text" v-model="allData.settings.icon.file" :title="manualData[1].description">
               </b-field>
-              <div class="level" style="margin:0px">
-                <div class="level-left" style="margin:0px">
+              <div style="display:flex; margin:0px">
                   <b-field label="Menu Items"></b-field>                      
-                </div>
-                <div class="level-left" style="margin:0px">
                   <b-button type="is-primary" inverted v-on:click="onclick_add" title="Add Item">
-                    <div style="display:flex">
                       <svg style="width:24px;height:24px;" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" />
                       </svg>
-                    </div>
                   </b-button>    
-                </div>
               </div>
 
               <div style="margin:0px; padding:0px; height:100%;width:100%">

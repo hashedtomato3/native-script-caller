@@ -1,6 +1,7 @@
 <template>
       <div class="panel" animation="slide" style="margin: 5px 0px 5px 40px; height:100%">
 
+        <!----- BAR ----->
         <div class="my-button" style="display:flex; padding:4px 0 4px 10px; " v-on:click="modalActive = true">
           <div style="margin: 0 auto 0 0">
                 {{menu.title}}
@@ -12,23 +13,24 @@
           </b-button>
         </div>
         
+        <!----- POPUP -------->
         <b-modal :active="modalActive" @close="modalActive=false" full-screen scroll="keep" can-cancel="false" style="height:100%">
           <div class="box" style=" height:1000px;">
 
+              <!--- head line --->
               <div style="display:flex">
                   <b-button type="is-primary" inverted v-on:click="modalActive = false"  title="Close" style="margin:auto 5px">
                     <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M13.5 21H6V17H13.5C15.43 17 17 15.43 17 13.5S15.43 10 13.5 10H11V14L4 8L11 2V6H13.5C17.64 6 21 9.36 21 13.5S17.64 21 13.5 21Z" />
                     </svg>
                   </b-button>
-                  <p class="title is-4">[User Script] {{menu.title}}</p>
+                  <p class="title is-4">[Menu Item] {{menu.title}}</p>
               </div>
     
-              <div class="xxpanel-block">
-                <form class="xxcard" style="height:100%">
+              <div>
+                <form style="height:100%">
                   <b-field label="Title" horizontal>
-                      <input class="input" type="text" v-model="menu.title" :title="manualData[3].description">
-          
+                      <input class="input" type="text" v-model="menu.title" :title="manualData[3].description">          
                   </b-field>
                   <b-field label="URL Filter" horizontal>
                     <input class="input" type="text" v-model="menu.trigger.menu.urlFilter"  :title="manualData[4].description">
@@ -37,9 +39,9 @@
                     <input class="input" type="text" v-model="menu.trigger.menu.removal"  :title="manualData[5].description">
                   </b-field>
                   <b-field label="User Script" horizontal>
-                    <label><input type="radio" v-model="menu.stage[0].type" value="nativeScript">Native Script (Node.js)</label>
+                    <label><input type="radio" v-model="menu.stage[0].type" value="nativeScript"> Native Script (Node.js)</label>
                     <span style="width:5px"></span>
-                    <label><input type="radio" v-model="menu.stage[0].type" value="browserScript">Browser Script (sandbox)</label>
+                    <label><input type="radio" v-model="menu.stage[0].type" value="browserScript"> Browser Script (sandbox)</label>
                   </b-field>
                   <b-field horizontal>
                     <codemirror v-model="menu.stage[0].nativeScript.nativeScript" :options="cmOptions" />
@@ -47,18 +49,17 @@
 
                   <b-field horizontal label="Action Functions" style="display:flex">
                       <b-button type="is-primary" inverted v-on:click="onclick_add" title="Add Action" style="margin:0 0 0 auto">
-                        <div style="display:flex">
                           <svg style="width:24px;height:24px;" viewBox="0 0 24 24">
                             <path fill="currentColor" d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" />
                           </svg>
-                        </div>
                       </b-button>    
                   </b-field>
 
-
+                  <!---- Action functions ---->
                   <div v-for="(stage, index) in menu.stage.slice(1)" :key="index" style="margin:0 0 0 100px">
 
                     <div class="panel" animation="slide" style="margin:5px 0 5px 40px; height:100%">
+                      <!---- BAR ------>
                       <div class="my-button" v-on:click="modalActive2 = index" style="display:flex; padding:4px 0px 4px 10px">
                         <div style="margin: 0 auto 0 0">
                               {{stage.actionName}}
@@ -70,6 +71,7 @@
                         </b-button>
                       </div>
                       
+                      <!--- POPUP ---->
                       <b-modal :active="modalActive2===index" @close="modalActive2=-1" full-screen scroll="keep" can-cancel="false" style="height:100%">
                         
                         <div style="display:flex">
@@ -86,9 +88,9 @@
                         </b-field>
 
                         <b-field label="Action Function" horizontal>
-                          <label><input type="radio" v-model="stage.type" value="nativeScript">Native Script (Node.js)</label>
+                          <label><input type="radio" v-model="stage.type" value="nativeScript"> Native Script (Node.js)</label>
                           <span style="width:5px"></span>
-                          <label><input type="radio" v-model="stage.type" value="browserScript">Browser Script (sandbox)</label>
+                          <label><input type="radio" v-model="stage.type" value="browserScript"> Browser Script (sandbox)</label>
                         </b-field>
                         <b-field horizontal>
                           <codemirror v-model="stage.nativeScript.nativeScript" :options="cmOptions" />

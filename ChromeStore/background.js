@@ -40,13 +40,14 @@ function chromeTabsSendMessage(tabId, message) {
 
 // send to native host
 function sendMessageToNativeHost(message, showNativeConnectionError = true) {
-    console.debug("request to native host:")
+    console.debug("Start Native Script:")
     console.debug(message)
     return new Promise((resolve, reject) => {
         // send message to native host
         chrome.runtime.sendNativeMessage(common.appName, message, async (response) => {
-            console.debug("response from native host: ");
+            console.debug("End Native Script: ");
             console.debug(response);
+            
             // if error occur in connecting to host, show installation inscruction page
             if (typeof response === "undefined" && showNativeConnectionError ) {
                 const errmes = chrome.runtime.lastError ? chrome.runtime.lastError.message : "";
@@ -294,27 +295,28 @@ async function actionForClickMenuItem(message) {
     let results = false;
     let script = storageData[common.storageKey].settings.menu[message.idx].stage[0].nativeScript.nativeScript;
     let scriptType = storageData[common.storageKey].settings.menu[message.idx].stage[0].type;
-    console.info("send to script & custom")
-    console.log({script, info:injectionCodeResults, scriptType});
+    console.log("----- User Script ---------");
+    //console.info("send to script & custom")
+    //console.log({script, info:injectionCodeResults, scriptType});
     results = await executeScriptAndCustom(script, injectionCodeResults, scriptType);
-    console.info("return from script & custom")
-    console.log(results)
+    //console.info("return from script & custom")
+    //console.log(results)
 
     // execute action native or sandbox script
     let next_action = results.action;
     while(next_action) {
         const stage = storageData[common.storageKey].settings.menu[message.idx].stage.slice(1).find(e => e.actionName === next_action);
-        console.log("next stage")
+        console.log("----- Action Function ---------");
         console.log(stage)
         let script = stage.nativeScript.nativeScript;
         scriptType = stage.type;
         results = JSON.parse(JSON.stringify(results)); // deep copy
         const info = {form:results.customResults?.form, data:results.response?.data}
-        console.info("send to action function & custom")
-        console.log({script, info, scriptType});
+        //console.info("send to action function & custom")
+        //console.log({script, info, scriptType});
         results = await executeScriptAndCustom(script, info, scriptType);
-        console.info("return from action function & custom")
-        console.log(results)
+        //console.info("return from action function & custom")
+        //console.log(results)
         next_action = results.action;
     }
 
@@ -334,7 +336,7 @@ async function executeScriptAndCustom(script, info, scriptType = "nativeScript")
 
     // execute custom Page
     if( "html" in results.response ) {
-        console.debug("custom html")
+        console.debug("Processing Custom HTML")
         // create tab for custom page
         const url = chrome.runtime.getURL("custom_page.html")
         const tab = await chrome.tabs.create({url: url});
@@ -345,14 +347,14 @@ async function executeScriptAndCustom(script, info, scriptType = "nativeScript")
             let [t] = await chrome.tabs.query({ active: true, currentWindow: true });
             //console.log(t.status)
             if( t.status === "complete" ) {
-                console.log("break waiting at: "+i)
+                //console.log("break waiting at: "+i)
                 break;
             }
         }
         // send message to custom page tab
         const customPageResults = await chromeTabsSendMessage(tab.id, results.response);
-        console.info("return value from custom page:");
-        console.log(customPageResults);
+        console.debug("return value from custom page:");
+        console.debug(customPageResults);
         // check error in custom page
         if(customPageResults.error){
             throw customPageResults; // return error
@@ -380,16 +382,16 @@ async function executeSandboxScript(msg){ // msg = { script:<script>, info:<info
             let [t] = await chrome.tabs.query({ active: true, currentWindow: true });
             //console.log(t.status)
             if( t.status === "complete" ) {
-                console.log("break waiting at: "+i)
+                //console.log("break waiting at: "+i)
                 break;
             }
         }
         // send starter message to sandbox_page
-        console.info("send message to sandbox page:")
-        console.log(msg);
+        console.debug("Start Sandbox Script:")
+        console.debug(msg);
         const sandboxPageResults = await chromeTabsSendMessage(tab.id, msg);
-        console.info("return value from sandbox page:");
-        console.log(sandboxPageResults);
+        console.debug("End Sandbox Script:");
+        console.debug(sandboxPageResults);
         // check error in injection code
         if(sandboxPageResults.error){
             throw sandboxPageResults; // return error

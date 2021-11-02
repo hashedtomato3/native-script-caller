@@ -46,7 +46,7 @@ function sendMessageToNativeHost(message, showNativeConnectionError = true) {
         // send message to native host
         chrome.runtime.sendNativeMessage(common.appName, message, async (response) => {
             console.debug("End Native Script: ");
-            console.debug(response);
+            console.debug(response?.response);
             
             // if error occur in connecting to host, show installation inscruction page
             if (typeof response === "undefined" && showNativeConnectionError ) {
@@ -216,7 +216,7 @@ async function createMenu() {
 
 // on clicking menu item
 async function actionForClickMenuItem(message) {
-    console.debug("---- menu item clicked ----")
+    console.debug("---- menu item clicked --------")
     // load injection code from local storage
     const storageData = await chromeStorageLocalGet(common.storageKey);
     //console.debug(storageData)
@@ -284,8 +284,8 @@ async function actionForClickMenuItem(message) {
     // send message to injection code
     const removal = storageData[common.storageKey].settings.menu[message.idx].removal;
     const injectionCodeResults = await chromeTabsSendMessage(tabId, {removal:removal});
-    console.info("return value from injection code:");
-    console.log(injectionCodeResults);
+    console.debug("return value from injection code:");
+    console.debug(injectionCodeResults);
     // check error in injection code
     if(injectionCodeResults.error){
         throw injectionCodeResults; // return error
@@ -295,7 +295,7 @@ async function actionForClickMenuItem(message) {
     let results = false;
     let script = storageData[common.storageKey].settings.menu[message.idx].stage[0].nativeScript.nativeScript;
     let scriptType = storageData[common.storageKey].settings.menu[message.idx].stage[0].type;
-    console.log("----- User Script ---------");
+    console.debug("----- User Script -------------");
     //console.info("send to script & custom")
     //console.log({script, info:injectionCodeResults, scriptType});
     results = await executeScriptAndCustom(script, injectionCodeResults, scriptType);
@@ -306,8 +306,8 @@ async function actionForClickMenuItem(message) {
     let next_action = results.action;
     while(next_action) {
         const stage = storageData[common.storageKey].settings.menu[message.idx].stage.slice(1).find(e => e.actionName === next_action);
-        console.log("----- Action Function ---------");
-        console.log(stage)
+        console.debug(`----- Action Function: ${stage.actionName} ---------`);
+        //console.log(stage)
         let script = stage.nativeScript.nativeScript;
         scriptType = stage.type;
         results = JSON.parse(JSON.stringify(results)); // deep copy
@@ -391,7 +391,7 @@ async function executeSandboxScript(msg){ // msg = { script:<script>, info:<info
         console.debug(msg);
         const sandboxPageResults = await chromeTabsSendMessage(tab.id, msg);
         console.debug("End Sandbox Script:");
-        console.debug(sandboxPageResults);
+        console.debug(sandboxPageResults?.response);
         // check error in injection code
         if(sandboxPageResults.error){
             throw sandboxPageResults; // return error

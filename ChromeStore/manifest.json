@@ -1,6 +1,6 @@
 {
     "name": "Native Script Caller",
-    "version": "2.1.6",
+    "version": "2.1.7",
     "manifest_version": 3,
     "description": "Custom MENU to execute user Javascript and arbitary local PC programs, and display custom pages",
     "icons": {

@@ -27,10 +27,11 @@ C:\Users\sdkn1\AppData\Roaming\npm
 
 ```
 - install node and npm
-> //npm install -g vue  (vue2)  // not required, vue cli includes vue???
-nvm install 14.16.0              
-nvm use 14.16.0                  node -v                         
-> npm install -g @vue/cli  
+> //npm install -g vue  (vue2)  // not required, vue cli includes vue
+>nvm install 14.16.0              
+>nvm use 14.16.0
+>node -v                         
+> npm install -g @vue/cli  // select vue2, npm
 > vue create vue   // specifying vue2 default
 > cd vue
 > npm install buefy

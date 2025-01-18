@@ -11,7 +11,7 @@ Chrome Extension that calls native node.js script from browser.
 ### Used versions
 
 ```
-> node -v
+node -v                         
 v14.16.0
 > vue -V
 @vue/cli 4.5.12
@@ -28,6 +28,8 @@ C:\Users\sdkn1\AppData\Roaming\npm
 ```
 - install node and npm
 > //npm install -g vue  (vue2)  // not required, vue cli includes vue???
+nvm install 14.16.0              
+nvm use 14.16.0                  node -v                         
 > npm install -g @vue/cli  
 > vue create vue   // specifying vue2 default
 > cd vue
@@ -51,6 +53,7 @@ OR
 ```
 cd vue
 npm install  // install all for ./packatge.json
+or, npm ci // install for package-lock.json
 ```
 
 ### Build and Deploy
